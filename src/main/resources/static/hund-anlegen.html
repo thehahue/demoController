@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuen Hund anlegen</title>
+    <style>
+        :root {
+            --bg: #f6f7fb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #4b5563;
+            --primary: #0f766e;
+            --primary-hover: #115e59;
+            --danger: #b91c1c;
+            --success: #166534;
+            --border: #d1d5db;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top left, #dbeafe, var(--bg) 35%);
+            color: var(--text);
+        }
+
+        main {
+            max-width: 640px;
+            margin: 48px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 1.6rem;
+        }
+
+        p {
+            color: var(--muted);
+            margin: 0 0 20px;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        label {
+            font-weight: 600;
+        }
+
+        input {
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            font-size: 1rem;
+            padding: 10px 12px;
+        }
+
+        input:focus {
+            outline: 2px solid #bfdbfe;
+            border-color: #93c5fd;
+        }
+
+        button {
+            border: 0;
+            border-radius: 9px;
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 1rem;
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        .status {
+            min-height: 24px;
+            margin-top: 16px;
+            font-weight: 600;
+        }
+
+        .status.error {
+            color: var(--danger);
+        }
+
+        .status.success {
+            color: var(--success);
+        }
+
+        pre {
+            margin-top: 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 9px;
+            padding: 12px;
+            overflow-x: auto;
+        }
+
+        .links {
+            margin-top: 18px;
+            font-size: 0.95rem;
+        }
+
+        .links a {
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section class="card">
+        <h1>Neuen Hund anlegen</h1>
+        <p>Dieses Formular sendet an den neuen Controller: <code>POST /dog/create</code>.</p>
+
+        <form id="hundForm">
+            <div class="field">
+                <label for="id">ID</label>
+                <input id="id" name="id" type="number" min="1" required placeholder="z.B. 10">
+            </div>
+
+            <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" required placeholder="z.B. Rocky">
+            </div>
+
+            <div class="field">
+                <label for="age">Alter</label>
+                <input id="age" name="age" type="number" min="0" required placeholder="z.B. 2">
+            </div>
+
+            <button type="submit">Hund speichern</button>
+        </form>
+
+        <div id="status" class="status"></div>
+        <pre id="result">Noch keine Anfrage gesendet.</pre>
+
+        <div class="links">
+            <a href="/hunde.html">Zur Abfrage-Seite</a>
+        </div>
+    </section>
+</main>
+
+<script>
+    const form = document.getElementById("hundForm");
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+
+    function setStatus(message, cssClass) {
+        statusEl.className = "status " + (cssClass || "");
+        statusEl.textContent = message;
+    }
+
+    function safeJsonParse(text) {
+        try {
+            return JSON.parse(text);
+        } catch (_) {
+            return null;
+        }
+    }
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const payload = {
+            id: Number(form.id.value),
+            name: form.name.value,
+            age: Number(form.age.value)
+        };
+
+        setStatus("Sende Daten...", "");
+
+        try {
+            const response = await fetch("/dog/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const raw = await response.text();
+            const parsed = safeJsonParse(raw);
+
+            if (!response.ok) {
+                const message = parsed && parsed.message ? parsed.message : "Fehler beim Speichern.";
+                setStatus("Fehler " + response.status + ": " + message, "error");
+                resultEl.textContent = raw || "Keine weiteren Details.";
+                return;
+            }
+
+            setStatus("Hund erfolgreich gespeichert.", "success");
+            resultEl.textContent = JSON.stringify(parsed, null, 2);
+        } catch (err) {
+            setStatus("Netzwerkfehler: " + err.message, "error");
+            resultEl.textContent = "Request konnte nicht ausgefuehrt werden.";
+        }
+    });
+</script>
+</body>
+</html>
