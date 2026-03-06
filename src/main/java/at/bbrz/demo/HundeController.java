@@ -7,25 +7,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class HundeController {
-    private List<Hund> hunde=new ArrayList<>();
+    private Map<Integer, Hund> hunde=new HashMap<>();
 
     public HundeController() {
         // Demo-Daten
-        hunde.add(new Hund("Fifi", 5, 1));
-        hunde.add(new Hund("Bello",3, 2));
-        hunde.add(new Hund("Luna",7, 3));
+        hunde.put(1, new Hund("Fifi", 5, 1));
+        hunde.put(2, new Hund("Bello",3, 2));
+        hunde.put(3, new Hund("Luna",7, 3));
     }
 
     @GetMapping("/dog/{hundId}")
     public Hund getHundById(@PathVariable int hundId) {
-        for (Hund hund : hunde) {
-            if (hund.getId() == hundId) {
-                return hund;
-            }
+        if (hunde.containsKey(hundId)) {
+            return hunde.get(hundId);
         }
 
         throw new ResponseStatusException
