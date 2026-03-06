@@ -129,11 +129,6 @@
 
         <form id="hundForm">
             <div class="field">
-                <label for="id">ID</label>
-                <input id="id" name="id" type="number" min="1" required placeholder="z.B. 10">
-            </div>
-
-            <div class="field">
                 <label for="name">Name</label>
                 <input id="name" name="name" type="text" required placeholder="z.B. Rocky">
             </div>
@@ -177,7 +172,6 @@
         event.preventDefault();
 
         const payload = {
-            id: Number(form.id.value),
             name: form.name.value,
             age: Number(form.age.value)
         };

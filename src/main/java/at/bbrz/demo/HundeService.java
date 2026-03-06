@@ -18,13 +18,20 @@ public class HundeService {
         return hunde.get(hundId);
     }
 
-    public Hund addHund(int id, String name, int age) {
-        if (hunde.containsKey(id)) {
-            throw new IllegalArgumentException("Hund mit ID " + id + " existiert bereits.");
-        }
-
-        Hund neuerHund = new Hund(name, age, id);
-        hunde.put(id, neuerHund);
+    public Hund addHund(String name, int age) {
+        int neueId = naechsteId();
+        Hund neuerHund = new Hund(name, age, neueId);
+        hunde.put(neueId, neuerHund);
         return neuerHund;
+    }
+
+    private int naechsteId() {
+        int max = 0;
+        for (int id : hunde.keySet()) {
+            if (id > max) {
+                max = id;
+            }
+        }
+        return max + 1;
     }
 }

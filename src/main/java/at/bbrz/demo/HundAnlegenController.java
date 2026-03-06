@@ -22,23 +22,15 @@ public class HundAnlegenController {
     public Hund createHund(@RequestBody HundAnlegenRequest request) {
         validateRequest(request);
 
-        try {
-            return hundeService.addHund(
-                    request.getId(),
-                    request.getName().trim(),
-                    request.getAge()
-            );
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, ex.getMessage());
-        }
+        return hundeService.addHund(
+                request.getName().trim(),
+                request.getAge()
+        );
     }
 
     private void validateRequest(HundAnlegenRequest request) {
         if (request == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request darf nicht leer sein.");
-        }
-        if (request.getId() == null || request.getId() <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID muss groesser als 0 sein.");
         }
         if (request.getName() == null || request.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name darf nicht leer sein.");
