@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alle Hunde</title>
+    <style>
+        :root {
+            --bg: #f6f7fb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #4b5563;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --danger: #b91c1c;
+            --success: #166534;
+            --border: #d1d5db;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top left, #dbeafe, var(--bg) 35%);
+            color: var(--text);
+        }
+
+        main {
+            max-width: 760px;
+            margin: 48px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 1.6rem;
+        }
+
+        p {
+            color: var(--muted);
+            margin: 0 0 20px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 9px;
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 1rem;
+            padding: 10px 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        .status {
+            min-height: 24px;
+            margin: 16px 0 12px;
+            font-weight: 600;
+        }
+
+        .status.error {
+            color: var(--danger);
+        }
+
+        .status.success {
+            color: var(--success);
+        }
+
+        .hunde-liste {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 12px;
+        }
+
+        .hund-eintrag {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            background: #f8fafc;
+        }
+
+        .hund-eintrag strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 1.05rem;
+        }
+
+        .links {
+            margin-top: 18px;
+            font-size: 0.95rem;
+        }
+
+        .links a {
+            color: #1d4ed8;
+            margin-right: 14px;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section class="card">
+        <h1>Alle Hunde</h1>
+        <p>Diese Seite lädt alle Hunde über <code>GET /allDogs</code> und zeigt sie als Liste an.</p>
+
+        <button id="ladenBtn" type="button">Alle Hunde laden</button>
+
+        <div id="status" class="status"></div>
+        <ul id="hundeListe" class="hunde-liste"></ul>
+
+        <div class="links">
+            <a href="/hunde.html">Zur Abfrage-Seite</a>
+            <a href="/hund-anlegen.html">Neuen Hund anlegen</a>
+        </div>
+    </section>
+</main>
+
+<script>
+    const ladenBtn = document.getElementById("ladenBtn");
+    const statusEl = document.getElementById("status");
+    const hundeListeEl = document.getElementById("hundeListe");
+
+    function setStatus(message, cssClass) {
+        statusEl.className = "status " + (cssClass || "");
+        statusEl.textContent = message;
+    }
+
+    function renderHunde(hunde) {
+        hundeListeEl.innerHTML = "";
+
+        hunde.forEach((hund) => {
+            const item = document.createElement("li");
+            item.className = "hund-eintrag";
+            item.innerHTML =
+                "<strong>" + escapeHtml(hund.name) + "</strong>" +
+                "<span>ID: " + hund.id + " | Alter: " + hund.age + " Jahre</span>";
+            hundeListeEl.appendChild(item);
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll("\"", "&quot;")
+            .replaceAll("'", "&#39;");
+    }
+
+    async function ladeAlleHunde() {
+        setStatus("Lade alle Hunde...", "");
+        hundeListeEl.innerHTML = "";
+
+        try {
+            const response = await fetch("/allDogs");
+            const hunde = await response.json();
+
+            if (!response.ok) {
+                setStatus("Fehler " + response.status + " beim Laden der Hunde.", "error");
+                return;
+            }
+
+            if (hunde.length === 0) {
+                setStatus("Es sind aktuell keine Hunde vorhanden.", "");
+                return;
+            }
+
+            renderHunde(hunde);
+            setStatus(hunde.length + " Hunde erfolgreich geladen.", "success");
+        } catch (err) {
+            setStatus("Netzwerkfehler: " + err.message, "error");
+        }
+    }
+
+    ladenBtn.addEventListener("click", ladeAlleHunde);
+    ladeAlleHunde();
+</script>
+</body>
+</html>
