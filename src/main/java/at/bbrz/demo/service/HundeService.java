@@ -9,7 +9,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 @Service
-public class HundeService {
+public class HundeService implements HundeServiceInterface {
     private final Hashtable<Integer, Hund> hunde = new Hashtable<>();
 
     public HundeService() {
