@@ -27,6 +27,10 @@ public class HundeService {
         return alleHunde;
     }
 
+    public Hund deleteHundById(int hundId) {
+        return hunde.remove(hundId);
+    }
+
     public Hund addHund(String name, int age) {
         int neueId = naechsteId();
         Hund neuerHund = new Hund(name, age, neueId);

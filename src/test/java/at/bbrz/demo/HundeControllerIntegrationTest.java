@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,5 +66,27 @@ class HundeControllerIntegrationTest {
                 .andExpect(jsonPath("$[2].id").value(3))
                 .andExpect(jsonPath("$[2].name").value("Luna"))
                 .andExpect(jsonPath("$[2].age").value(7));
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void deleteHundById_withExistingId_deletesHund() throws Exception {
+        mockMvc.perform(delete("/hunde/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.name").value("Bello"))
+                .andExpect(jsonPath("$.age").value(3));
+
+        mockMvc.perform(get("/allDogs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[1].id").value(3));
+    }
+
+    @Test
+    void deleteHundById_withNonExistingId_returns404() throws Exception {
+        mockMvc.perform(delete("/hunde/99"))
+                .andExpect(status().isNotFound());
     }
 }

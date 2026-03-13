@@ -93,12 +93,35 @@
             border-radius: 10px;
             padding: 14px 16px;
             background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
 
         .hund-eintrag strong {
             display: block;
             margin-bottom: 4px;
             font-size: 1.05rem;
+        }
+
+        .hund-infos {
+            flex: 1;
+        }
+
+        .delete-btn {
+            width: 34px;
+            min-width: 34px;
+            height: 34px;
+            padding: 0;
+            border-radius: 999px;
+            background: #dc2626;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
         }
 
         .links {
@@ -146,9 +169,22 @@
         hunde.forEach((hund) => {
             const item = document.createElement("li");
             item.className = "hund-eintrag";
-            item.innerHTML =
+
+            const infos = document.createElement("div");
+            infos.className = "hund-infos";
+            infos.innerHTML =
                 "<strong>" + escapeHtml(hund.name) + "</strong>" +
                 "<span>ID: " + hund.id + " | Alter: " + hund.age + " Jahre</span>";
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.type = "button";
+            deleteBtn.className = "delete-btn";
+            deleteBtn.textContent = "X";
+            deleteBtn.setAttribute("aria-label", "Hund " + hund.name + " löschen");
+            deleteBtn.addEventListener("click", () => deleteHund(hund.id, hund.name));
+
+            item.appendChild(infos);
+            item.appendChild(deleteBtn);
             hundeListeEl.appendChild(item);
         });
     }
@@ -187,7 +223,25 @@
         }
     }
 
-    ladenBtn.addEventListener("click", ladeAlleHunde);
+    async function deleteHund(id, name) {
+        setStatus("Lösche Hund " + name + "...", "");
+
+        try {
+            const response = await fetch("/dog/" + encodeURIComponent(id), {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                setStatus("Fehler " + response.status + " beim Löschen von " + name + ".", "error");
+                return;
+            }
+
+            await ladeAlleHunde();
+            setStatus("Hund " + name + " wurde gelöscht.", "success");
+        } catch (err) {
+            setStatus("Netzwerkfehler: " + err.message, "error");
+        }
+    }
     ladeAlleHunde();
 </script>
 </body>

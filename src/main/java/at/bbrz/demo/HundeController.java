@@ -2,6 +2,7 @@ package at.bbrz.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,5 +33,18 @@ public class HundeController {
     @GetMapping("/allDogs")
     public List<Hund> getAllDogs() {
         return hundeService.getAllHunde();
+    }
+
+    @DeleteMapping("/dog/{id}")
+    public Hund deleteHundById(@PathVariable int id) {
+        Hund geloeschterHund = hundeService.deleteHundById(id);
+        if (geloeschterHund != null) {
+            return geloeschterHund;
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Hund mit ID: " + id + " nicht gefunden"
+        );
     }
 }
