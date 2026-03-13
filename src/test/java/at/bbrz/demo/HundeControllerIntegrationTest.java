@@ -71,7 +71,7 @@ class HundeControllerIntegrationTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void deleteHundById_withExistingId_deletesHund() throws Exception {
-        mockMvc.perform(delete("/hunde/2"))
+        mockMvc.perform(delete("/dog/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.name").value("Bello"))
@@ -86,7 +86,7 @@ class HundeControllerIntegrationTest {
 
     @Test
     void deleteHundById_withNonExistingId_returns404() throws Exception {
-        mockMvc.perform(delete("/hunde/99"))
+        mockMvc.perform(delete("/dog/99"))
                 .andExpect(status().isNotFound());
     }
 }
