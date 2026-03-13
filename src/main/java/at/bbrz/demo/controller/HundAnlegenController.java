@@ -1,5 +1,6 @@
-package at.bbrz.demo;
+package at.bbrz.demo.controller;
 
+import at.bbrz.demo.HundeService;
 import at.bbrz.demo.model.Hund;
 import at.bbrz.demo.model.HundAnlegenRequest;
 import org.springframework.beans.factory.annotation.Autowired;

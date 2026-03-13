@@ -1,4 +1,4 @@
-package at.bbrz.demo;
+package at.bbrz.demo.controller;
 
 import at.bbrz.demo.model.Hund;
 import org.springframework.web.bind.annotation.GetMapping;
