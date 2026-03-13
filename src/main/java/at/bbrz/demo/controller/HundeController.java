@@ -2,6 +2,7 @@ package at.bbrz.demo.controller;
 
 import at.bbrz.demo.service.HundeService;
 import at.bbrz.demo.model.Hund;
+import at.bbrz.demo.service.HundeServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,10 +15,10 @@ import java.util.List;
 
 @RestController
 public class HundeController {
-    private final HundeService hundeService;
+    private final HundeServiceInterface hundeService;
 
     @Autowired
-    public HundeController(HundeService hundeService) {
+    public HundeController(HundeServiceInterface hundeService) {
         this.hundeService = hundeService;
     }
 

@@ -3,6 +3,7 @@ package at.bbrz.demo.controller;
 import at.bbrz.demo.service.HundeService;
 import at.bbrz.demo.model.Hund;
 import at.bbrz.demo.model.HundAnlegenRequest;
+import at.bbrz.demo.service.HundeServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,10 +14,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class HundAnlegenController {
-    private final HundeService hundeService;
+    private final HundeServiceInterface hundeService;
 
     @Autowired
-    public HundAnlegenController(HundeService hundeService) {
+    public HundAnlegenController(HundeServiceInterface hundeService) {
         this.hundeService = hundeService;
     }
 
