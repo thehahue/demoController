@@ -1,6 +1,5 @@
 package at.bbrz.demo.controller;
 
-import at.bbrz.demo.service.HundeService;
 import at.bbrz.demo.model.Hund;
 import at.bbrz.demo.service.HundeServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,8 @@ public class HundeController {
     private final HundeServiceInterface hundeService;
 
     @Autowired
-    public HundeController(HundeServiceInterface hundePermService) {
-        this.hundeService = hundePermService;
+    public HundeController(HundeServiceInterface hundeService) {
+        this.hundeService = hundeService;
     }
 
     @GetMapping("/dog/{hundId}")

@@ -1,6 +1,5 @@
 package at.bbrz.demo.controller;
 
-import at.bbrz.demo.service.HundeService;
 import at.bbrz.demo.model.Hund;
 import at.bbrz.demo.model.HundAnlegenRequest;
 import at.bbrz.demo.service.HundeServiceInterface;
@@ -17,8 +16,8 @@ public class HundAnlegenController {
     private final HundeServiceInterface hundeService;
 
     @Autowired
-    public HundAnlegenController(HundeServiceInterface hundePermService) {
-        this.hundeService = hundePermService;
+    public HundAnlegenController(HundeServiceInterface hundeService) {
+        this.hundeService = hundeService;
     }
 
     @PostMapping("/dog/create")

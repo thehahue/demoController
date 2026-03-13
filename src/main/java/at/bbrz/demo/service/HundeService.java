@@ -1,6 +1,7 @@
 package at.bbrz.demo.service;
 
 import at.bbrz.demo.model.Hund;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 @Service
+@Profile("!perm")
 public class HundeService implements HundeServiceInterface {
     private final Hashtable<Integer, Hund> hunde = new Hashtable<>();
 

@@ -3,11 +3,13 @@ package at.bbrz.demo.service;
 import at.bbrz.demo.model.Hund;
 import at.bbrz.demo.repository.HundeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Profile("perm")
 public class HundePermService implements HundeServiceInterface {
     private HundeRepository hundeRepository;
 
