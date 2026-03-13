@@ -18,8 +18,8 @@ public class HundeController {
     private final HundeServiceInterface hundeService;
 
     @Autowired
-    public HundeController(HundeServiceInterface hundeService) {
-        this.hundeService = hundeService;
+    public HundeController(HundeServiceInterface hundePermService) {
+        this.hundeService = hundePermService;
     }
 
     @GetMapping("/dog/{hundId}")

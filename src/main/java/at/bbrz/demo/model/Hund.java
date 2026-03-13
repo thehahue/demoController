@@ -17,6 +17,14 @@ public class Hund {
         this.id = id;
     }
 
+    public Hund(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public Hund() {
+    }
+
     public String getName() {
         return name;
     }

@@ -17,8 +17,8 @@ public class HundAnlegenController {
     private final HundeServiceInterface hundeService;
 
     @Autowired
-    public HundAnlegenController(HundeServiceInterface hundeService) {
-        this.hundeService = hundeService;
+    public HundAnlegenController(HundeServiceInterface hundePermService) {
+        this.hundeService = hundePermService;
     }
 
     @PostMapping("/dog/create")
