@@ -1,4 +1,4 @@
-package at.bbrz.demo;
+package at.bbrz.demo.service;
 
 import at.bbrz.demo.model.Hund;
 import org.springframework.stereotype.Service;

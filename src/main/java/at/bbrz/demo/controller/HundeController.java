@@ -1,6 +1,6 @@
 package at.bbrz.demo.controller;
 
-import at.bbrz.demo.HundeService;
+import at.bbrz.demo.service.HundeService;
 import at.bbrz.demo.model.Hund;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
