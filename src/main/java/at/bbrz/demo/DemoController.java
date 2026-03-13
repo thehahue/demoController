@@ -1,5 +1,6 @@
 package at.bbrz.demo;
 
+import at.bbrz.demo.model.Hund;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;

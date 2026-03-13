@@ -1,5 +1,7 @@
 package at.bbrz.demo;
 
+import at.bbrz.demo.model.Hund;
+import at.bbrz.demo.model.HundAnlegenRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;

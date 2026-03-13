@@ -1,4 +1,4 @@
-package at.bbrz.demo;
+package at.bbrz.demo.model;
 
 public class Hund {
     private int id;

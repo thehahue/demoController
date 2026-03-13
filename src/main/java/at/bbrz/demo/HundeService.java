@@ -1,5 +1,6 @@
 package at.bbrz.demo;
 
+import at.bbrz.demo.model.Hund;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
