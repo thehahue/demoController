@@ -2,7 +2,10 @@ package at.bbrz.demo;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.List;
 
 @Service
 public class HundeService {
@@ -16,6 +19,12 @@ public class HundeService {
 
     public Hund getHundById(int hundId) {
         return hunde.get(hundId);
+    }
+
+    public List<Hund> getAllHunde() {
+        List<Hund> alleHunde = new ArrayList<>(hunde.values());
+        alleHunde.sort(Comparator.comparingInt(Hund::getId));
+        return alleHunde;
     }
 
     public Hund addHund(String name, int age) {

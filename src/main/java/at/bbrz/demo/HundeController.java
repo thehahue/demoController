@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 public class HundeController {
     private final HundeService hundeService;
@@ -25,5 +27,10 @@ public class HundeController {
 
         throw new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Hund mit ID: " + hundId + " nicht gefunden");
+    }
+
+    @GetMapping("/allDogs")
+    public List<Hund> getAllDogs() {
+        return hundeService.getAllHunde();
     }
 }

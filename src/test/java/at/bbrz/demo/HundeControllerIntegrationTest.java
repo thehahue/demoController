@@ -49,4 +49,20 @@ class HundeControllerIntegrationTest {
         mockMvc.perform(get("/dog/99"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void getAllDogs_returnsAllDogs() throws Exception {
+        mockMvc.perform(get("/allDogs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].name").value("Fifi"))
+                .andExpect(jsonPath("$[0].age").value(5))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].name").value("Bello"))
+                .andExpect(jsonPath("$[1].age").value(3))
+                .andExpect(jsonPath("$[2].id").value(3))
+                .andExpect(jsonPath("$[2].name").value("Luna"))
+                .andExpect(jsonPath("$[2].age").value(7));
+    }
 }
