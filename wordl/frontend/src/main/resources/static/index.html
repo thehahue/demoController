@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordl</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="shell">
+    <section class="hero">
+        <div class="hero__copy">
+            <p class="eyebrow">Inspired by Wordle</p>
+            <h1>Wordl</h1>
+            <p class="intro">
+                Rate ein Wort in bis zu sechs Versuchen. Nach jedem Guess zeigen die Farben,
+                welche Buchstaben exakt sitzen, welche an anderer Stelle vorkommen und welche ausscheiden.
+            </p>
+        </div>
+        <div class="hero__controls">
+            <div class="size-picker" id="sizePicker" aria-label="Wortlänge auswählen">
+                <button class="chip chip--active" data-length="4" type="button">4</button>
+                <button class="chip" data-length="5" type="button">5</button>
+                <button class="chip" data-length="6" type="button">6</button>
+            </div>
+            <button class="primary-action" id="newGameButton" type="button">Neues Spiel</button>
+        </div>
+    </section>
+
+    <section class="layout">
+        <section class="panel panel--game">
+            <div class="panel__meta">
+                <div>
+                    <p class="meta-label">Aktuelles Spiel</p>
+                    <p class="meta-value" id="gameMeta">Lade Spiel ...</p>
+                </div>
+                <div class="pill" id="statusPill">In Vorbereitung</div>
+            </div>
+
+            <div class="board" id="board" aria-label="Spielfeld"></div>
+
+            <form class="guess-form" id="guessForm">
+                <label class="sr-only" for="guessInput">Wort eingeben</label>
+                <input autocomplete="off" class="guess-form__input" id="guessInput" maxlength="6" spellcheck="false" type="text">
+                <button class="guess-form__button" id="submitGuessButton" type="submit">Guess senden</button>
+            </form>
+
+            <p class="status-message" id="statusMessage">Starte ein neues Spiel, um direkt loszulegen.</p>
+            <div class="keyboard" id="keyboard" aria-label="Bildschirmtastatur"></div>
+        </section>
+
+        <aside class="panel panel--aside">
+            <div class="aside-block">
+                <p class="meta-label">Anleitung</p>
+                <ul class="rules">
+                    <li>Rate das Wort in maximal sechs Zügen.</li>
+                    <li>Grün bedeutet: richtiger Buchstabe an richtiger Stelle.</li>
+                    <li>Gold bedeutet: Buchstabe ist enthalten, aber an anderer Stelle.</li>
+                    <li>Grau bedeutet: dieser Buchstabe hilft dir nicht weiter.</li>
+                    <li>Mit den Längen 4, 5 und 6 kannst du unbegrenzt neue Runden starten.</li>
+                </ul>
+            </div>
+
+            <div class="aside-block legend">
+                <p class="meta-label">Farblegende</p>
+                <div class="legend-row">
+                    <span class="legend-tile legend-tile--correct">A</span>
+                    <span>Exakt getroffen</span>
+                </div>
+                <div class="legend-row">
+                    <span class="legend-tile legend-tile--present">L</span>
+                    <span>Im Wort, aber falsch platziert</span>
+                </div>
+                <div class="legend-row">
+                    <span class="legend-tile legend-tile--absent">Z</span>
+                    <span>Nicht im Wort enthalten</span>
+                </div>
+            </div>
+
+            <div class="aside-block aside-block--accent">
+                <p class="meta-label">Spielidee</p>
+                <p>
+                    Das Layout orientiert sich an der kompakten Wordle-Mechanik von
+                    wordle.name: oben schnelle Spielsteuerung, in der Mitte das Board,
+                    daneben eine kurze, sofort lesbare Erklärung.
+                </p>
+            </div>
+        </aside>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
