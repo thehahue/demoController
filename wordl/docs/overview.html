@@ -340,6 +340,15 @@
     .num { color: #fb923c; }   /* number/type */
     .cm  { color: #64748b; }   /* comment */
     .ann { color: #fbbf24; }   /* annotation */
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 2rem 0 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
   </style>
 </head>
 <body>
@@ -511,13 +520,13 @@
   <span class="cm">// 1. Alle Buchstaben zunächst ABSENT</span>
   List&lt;<span class="num">LetterEvaluation</span>&gt; letters = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;(guess.length());
   <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; guess.length(); i++)
-    letters.<span class="fn">add</span>(<span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.charAt(i), <span class="num">LetterState</span>.ABSENT));
+    letters.<span class="fn">add</span>(<span class="kw">new</span> <span class="num">LetterEvaluation</span>(<span class="num">String</span>.valueOf(guess.<span class="fn">charAt</span>(i)), <span class="num">LetterState</span>.ABSENT));
 
   <span class="cm">// 2. Erster Durchlauf: CORRECT markieren</span>
   Map&lt;<span class="num">Character</span>, <span class="num">Integer</span>&gt; remaining = <span class="kw">new</span> <span class="fn">HashMap</span>&lt;&gt;();
   <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; solution.length(); i++) {
     <span class="kw">if</span> (solution.<span class="fn">charAt</span>(i) == guess.<span class="fn">charAt</span>(i))
-      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.<span class="fn">charAt</span>(i), <span class="num">LetterState</span>.CORRECT));
+      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(<span class="num">String</span>.valueOf(guess.<span class="fn">charAt</span>(i)), <span class="num">LetterState</span>.CORRECT));
     <span class="kw">else</span>
       remaining.<span class="fn">merge</span>(solution.<span class="fn">charAt</span>(i), 1, Integer::<span class="fn">sum</span>);
   }
@@ -526,7 +535,7 @@
     <span class="kw">if</span> (letters.<span class="fn">get</span>(i).state() == <span class="num">LetterState</span>.CORRECT) <span class="kw">continue</span>;
     <span class="kw">int</span> rem = remaining.<span class="fn">getOrDefault</span>(guess.<span class="fn">charAt</span>(i), 0);
     <span class="kw">if</span> (rem &gt; 0) {
-      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.<span class="fn">charAt</span>(i), <span class="num">LetterState</span>.PRESENT));
+      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(<span class="num">String</span>.valueOf(guess.<span class="fn">charAt</span>(i)), <span class="num">LetterState</span>.PRESENT));
       remaining.<span class="fn">put</span>(guess.<span class="fn">charAt</span>(i), rem - 1);
     }
   }
@@ -609,17 +618,17 @@
 <span class="cm">// Visuelles Ergebnis für "STEIN" (Lösung: "TINTE"):</span>
 <span class="kw">const</span> demo = [
   { letter: <span class="str">"S"</span>, bg: <span class="str">"#3a3a3c"</span> }, <span class="cm">// ABSENT</span>
-  { letter: <span class="str">"T"</span>, bg: <span class="str">"#538d4e"</span> }, <span class="cm">// CORRECT ✓</span>
+  { letter: <span class="str">"T"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
   { letter: <span class="str">"E"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
   { letter: <span class="str">"I"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
-  { letter: <span class="str">"N"</span>, bg: <span class="str">"#538d4e"</span> }, <span class="cm">// CORRECT ✓</span>
+  { letter: <span class="str">"N"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
 ];</div>
         </div>
 
       </div><!-- /.flow-steps -->
     </section>
 
-    <footer style="text-align:center;color:var(--text-muted);font-size:0.8rem;padding:2rem 0 1rem;border-top:1px solid var(--border);margin-top:2rem">
+    <footer>
       Wordl · Spring Boot Frontend (Port 8080) + Backend (Port 8081) · Demo-Projekt
     </footer>
   </div>
