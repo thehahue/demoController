@@ -32,6 +32,9 @@
       --present: #b59f3b;
       --absent: #3a3a3c;
       --font-mono: 'Courier New', Courier, monospace;
+      --orange-text: #fed7aa;
+      --blue-text: #bfdbfe;
+      --yellow-text: #fef3c7;
     }
 
     body {
@@ -163,13 +166,13 @@
     .arch-arrow--request {
       background: var(--orange-bg);
       border: 1px solid var(--orange-border);
-      color: #fed7aa;
+      color: var(--orange-text);
     }
 
     .arch-arrow--response {
       background: var(--blue-bg);
       border: 1px solid var(--blue-border);
-      color: #bfdbfe;
+      color: var(--blue-text);
     }
 
     .arch-arrow__symbol {
@@ -190,7 +193,7 @@
       border-radius: 8px;
       padding: 0.75rem 1rem;
       font-size: 0.85rem;
-      color: #fef3c7;
+      color: var(--yellow-text);
     }
 
     .cors-note strong { color: var(--yellow); }
@@ -226,6 +229,8 @@
       color: var(--text-muted);
       padding: 1px 0;
     }
+
+    .arch-layer--highlight { color: var(--blue-text); }
   </style>
 </head>
 <body>
@@ -264,8 +269,8 @@
           <div class="arch-box__title">⚙️ Backend</div>
           <div class="arch-box__detail">Spring Boot · Port 8081<br>REST API</div>
           <div class="arch-box__layers">
-            <span style="color:#93c5fd">GameController</span>
-            <span style="color:#93c5fd">GameService</span>
+            <span class="arch-layer--highlight">GameController</span>
+            <span class="arch-layer--highlight">GameService</span>
             <span>GuessEvaluation</span>
             <span>LetterState</span>
           </div>
