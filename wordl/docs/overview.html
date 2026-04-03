@@ -77,6 +77,155 @@
       padding-left: 0.75rem;
       margin-bottom: 1.5rem;
     }
+
+    /* ── Architekturdiagramm ────────────────────────────── */
+    .arch-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      padding: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .arch-box {
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .arch-box--frontend {
+      background: var(--green-bg);
+      border: 2px solid var(--green);
+    }
+
+    .arch-box--backend {
+      background: var(--blue-bg);
+      border: 2px solid var(--blue);
+    }
+
+    .arch-box__title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .arch-box--frontend .arch-box__title { color: var(--green); }
+    .arch-box--backend  .arch-box__title { color: var(--blue); }
+
+    .arch-box__detail {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      line-height: 1.5;
+    }
+
+    .arch-box__layers {
+      margin-top: 0.6rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      text-align: left;
+      color: var(--text-muted);
+    }
+
+    .arch-box__layers span {
+      display: block;
+      padding: 2px 0;
+    }
+
+    .arch-box__layers span::before { content: "├ "; }
+    .arch-box__layers span:last-child::before { content: "└ "; }
+
+    .arch-arrows {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: stretch;
+      min-width: 220px;
+    }
+
+    .arch-arrow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .arch-arrow--request {
+      background: var(--orange-bg);
+      border: 1px solid var(--orange-border);
+      color: #fed7aa;
+    }
+
+    .arch-arrow--response {
+      background: var(--blue-bg);
+      border: 1px solid var(--blue-border);
+      color: #bfdbfe;
+    }
+
+    .arch-arrow__symbol {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .arch-label {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .cors-note {
+      background: var(--yellow-bg);
+      border: 1px solid var(--yellow-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: #fef3c7;
+    }
+
+    .cors-note strong { color: var(--yellow); }
+
+    .package-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .package-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+    }
+
+    .package-box__title {
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .package-box--frontend .package-box__title { color: var(--green); }
+    .package-box--backend  .package-box__title { color: var(--blue); }
+
+    .package-box span {
+      display: block;
+      color: var(--text-muted);
+      padding: 1px 0;
+    }
   </style>
 </head>
 <body>
@@ -88,7 +237,66 @@
 
     <section id="architecture">
       <h2>1. Systemarchitektur</h2>
-      <!-- Task 2 -->
+      <div class="arch-diagram">
+        <div class="arch-box arch-box--frontend">
+          <div class="arch-box__title">🌐 Browser / Frontend</div>
+          <div class="arch-box__detail">Spring Boot · Port 8080<br>statische Dateien</div>
+          <div class="arch-box__layers">
+            <span>index.html</span>
+            <span>styles.css</span>
+            <span>app.js</span>
+          </div>
+        </div>
+
+        <div class="arch-arrows">
+          <div class="arch-arrow arch-arrow--request">
+            <span class="arch-arrow__symbol">→</span>
+            <span>POST /api/games/{id}/guesses<br>{ guess: "STEIN" }</span>
+          </div>
+          <div class="arch-label">HTTP fetch() · JSON · CORS</div>
+          <div class="arch-arrow arch-arrow--response">
+            <span class="arch-arrow__symbol">←</span>
+            <span>200 OK · GameStateResponse<br>{ status, guesses, … }</span>
+          </div>
+        </div>
+
+        <div class="arch-box arch-box--backend">
+          <div class="arch-box__title">⚙️ Backend</div>
+          <div class="arch-box__detail">Spring Boot · Port 8081<br>REST API</div>
+          <div class="arch-box__layers">
+            <span style="color:#93c5fd">GameController</span>
+            <span style="color:#93c5fd">GameService</span>
+            <span>GuessEvaluation</span>
+            <span>LetterState</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cors-note">
+        <strong>Warum CORS?</strong> Frontend (Port 8080) und Backend (Port 8081) laufen als
+        <em>separate Prozesse</em>. Browser blockieren standardmäßig Cross-Origin-Anfragen.
+        <code>WebConfig.java</code> erlaubt Anfragen von <code>localhost:*</code> explizit via
+        <code>@Configuration + CorsRegistry</code>.
+      </div>
+
+      <div class="package-grid">
+        <div class="package-box package-box--frontend">
+          <div class="package-box__title">Frontend-Paketstruktur</div>
+          <span>FrontendApplication.java</span>
+          <span>resources/static/</span>
+          <span>&nbsp;&nbsp;index.html</span>
+          <span>&nbsp;&nbsp;app.js</span>
+          <span>&nbsp;&nbsp;styles.css</span>
+        </div>
+        <div class="package-box package-box--backend">
+          <div class="package-box__title">Backend-Paketstruktur</div>
+          <span>api/ → GameController</span>
+          <span>api/dto/ → Request/Response</span>
+          <span>service/ → GameService</span>
+          <span>game/ → Domain-Klassen</span>
+          <span>config/ → WebConfig (CORS)</span>
+        </div>
+      </div>
     </section>
 
     <section id="flow">
