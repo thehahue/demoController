@@ -231,6 +231,115 @@
     }
 
     .arch-layer--highlight { color: var(--blue-text); }
+
+    /* ── Request Flow ──────────────────────────────────── */
+    .flow-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .flow-btn {
+      background: var(--blue);
+      color: #0f172a;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .flow-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .flow-btn--reset { background: var(--surface-2); color: var(--text-muted); }
+
+    .flow-counter {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .flow-step {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      animation: fadeSlide 0.3s ease;
+    }
+
+    .flow-step.visible { display: block; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .flow-step__header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 1rem;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .flow-step__num {
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .flow-step__title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .flow-step__desc {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .flow-step__code {
+      padding: 0.75rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Farben pro Schritt */
+    .flow-step:nth-child(1) .flow-step__num { background: #4ade8033; color: var(--green); }
+    .flow-step:nth-child(2) .flow-step__num { background: #fbbf2433; color: var(--yellow); }
+    .flow-step:nth-child(3) .flow-step__num { background: #fb923c33; color: var(--orange); }
+    .flow-step:nth-child(4) .flow-step__num { background: #60a5fa33; color: var(--blue); }
+    .flow-step:nth-child(5) .flow-step__num { background: #a78bfa33; color: var(--purple); }
+    .flow-step:nth-child(6) .flow-step__num { background: #4ade8033; color: var(--green); }
+
+    /* Syntax-Highlight-Hilfsklassen */
+    .kw  { color: #c084fc; }   /* keyword */
+    .fn  { color: #60a5fa; }   /* function/method */
+    .str { color: #4ade80; }   /* string */
+    .num { color: #fb923c; }   /* number/type */
+    .cm  { color: #64748b; }   /* comment */
+    .ann { color: #fbbf24; }   /* annotation */
   </style>
 </head>
 <body>
@@ -306,7 +415,208 @@
 
     <section id="flow">
       <h2>2. Ein Spielzug — Schritt für Schritt</h2>
-      <!-- Task 3 + 4 -->
+      <div class="flow-controls">
+        <button class="flow-btn" id="btnNext" onclick="flowNext()">Weiter ▶</button>
+        <button class="flow-btn flow-btn--reset" id="btnReset" onclick="flowReset()">↺ Neustart</button>
+        <span class="flow-counter" id="flowCounter">Schritt 0 / 6</span>
+      </div>
+
+      <div class="flow-steps" id="flowSteps">
+
+        <!-- Schritt 1 -->
+        <div class="flow-step" data-step="1">
+          <div class="flow-step__header">
+            <div class="flow-step__num">1</div>
+            <div class="flow-step__title">Spieler drückt ENTER</div>
+          </div>
+          <div class="flow-step__desc">
+            Der Tastendruck landet im globalen <code>keydown</code>-Listener in <code>app.js</code>.
+            Er ruft <code>handleInput("Enter")</code> auf, was wiederum <code>submitGuess()</code> auslöst.
+          </div>
+          <div class="flow-step__code"><span class="cm">// app.js — globaler Tastatur-Listener</span>
+<span class="kw">document</span>.addEventListener(<span class="str">"keydown"</span>, (event) => {
+  <span class="kw">if</span> (event.metaKey || event.ctrlKey || event.altKey) <span class="kw">return</span>;
+  <span class="kw">if</span> (document.activeElement === elements.guessInput) {
+    <span class="kw">if</span> (event.key === <span class="str">"Enter"</span>) {
+      event.preventDefault();
+      <span class="fn">submitGuess</span>();   <span class="cm">// ← hier geht's weiter</span>
+    }
+    <span class="kw">return</span>;
+  }
+  <span class="fn">handleInput</span>(event.key);
+});</div>
+        </div>
+
+        <!-- Schritt 2 -->
+        <div class="flow-step" data-step="2">
+          <div class="flow-step__header">
+            <div class="flow-step__num">2</div>
+            <div class="flow-step__title">fetch() sendet HTTP POST</div>
+          </div>
+          <div class="flow-step__desc">
+            <code>submitGuess()</code> baut einen JSON-Body und sendet ihn per
+            <code>fetch()</code> an das Backend. Die Funktion ist <code>async</code> —
+            der Browser wartet auf die Antwort ohne die Seite zu blockieren.
+          </div>
+          <div class="flow-step__code"><span class="cm">// app.js — submitGuess()</span>
+<span class="kw">async function</span> <span class="fn">submitGuess</span>() {
+  <span class="fn">setBusy</span>(<span class="kw">true</span>);
+  <span class="kw">try</span> {
+    state.game = <span class="kw">await</span> <span class="fn">requestJson</span>(
+      <span class="str">`/games/<span class="num">${state.game.gameId}</span>/guesses`</span>,
+      { method: <span class="str">"POST"</span>, body: <span class="num">JSON</span>.stringify({ guess: state.currentGuess }) }
+    );
+    <span class="cm">// → POST http://localhost:8081/api/games/{uuid}/guesses</span>
+    <span class="cm">// → Body: { "guess": "STEIN" }</span>
+  } <span class="kw">finally</span> {
+    <span class="fn">setBusy</span>(<span class="kw">false</span>);
+    <span class="fn">render</span>();
+  }
+}</div>
+        </div>
+
+        <!-- Schritt 3 -->
+        <div class="flow-step" data-step="3">
+          <div class="flow-step__header">
+            <div class="flow-step__num">3</div>
+            <div class="flow-step__title">GameController empfängt den Request</div>
+          </div>
+          <div class="flow-step__desc">
+            Spring Boot deserialisiert den JSON-Body automatisch in ein <code>GuessRequest</code>-Record.
+            <code>@PathVariable</code> liest die UUID aus der URL. Der Controller delegiert sofort an den Service.
+          </div>
+          <div class="flow-step__code"><span class="cm">// GameController.java</span>
+<span class="ann">@PostMapping</span>(<span class="str">"/{gameId}/guesses"</span>)
+<span class="kw">public</span> <span class="num">GameStateResponse</span> <span class="fn">submitGuess</span>(
+        <span class="ann">@PathVariable</span> <span class="num">UUID</span> gameId,
+        <span class="ann">@RequestBody</span> <span class="num">GuessRequest</span> request) {
+    <span class="cm">// GuessRequest = record { String guess; }</span>
+    <span class="kw">return</span> gameService.<span class="fn">submitGuess</span>(gameId, request);
+}</div>
+        </div>
+
+        <!-- Schritt 4 -->
+        <div class="flow-step" data-step="4">
+          <div class="flow-step__header">
+            <div class="flow-step__num">4</div>
+            <div class="flow-step__title">GameService bewertet den Rateversuch</div>
+          </div>
+          <div class="flow-step__desc">
+            <code>evaluateGuess()</code> vergleicht Buchstaben in zwei Durchläufen:
+            zuerst alle exakten Treffer (<code>CORRECT</code>), dann die Buchstaben
+            im falschen Feld (<code>PRESENT</code>), der Rest bleibt <code>ABSENT</code>.
+          </div>
+          <div class="flow-step__code"><span class="cm">// GameService.java — evaluateGuess()</span>
+<span class="num">GuessEvaluation</span> <span class="fn">evaluateGuess</span>(<span class="num">String</span> guess, <span class="num">String</span> solution) {
+  <span class="cm">// 1. Alle Buchstaben zunächst ABSENT</span>
+  List&lt;<span class="num">LetterEvaluation</span>&gt; letters = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;(guess.length());
+  <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; guess.length(); i++)
+    letters.<span class="fn">add</span>(<span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.charAt(i), <span class="num">LetterState</span>.ABSENT));
+
+  <span class="cm">// 2. Erster Durchlauf: CORRECT markieren</span>
+  Map&lt;<span class="num">Character</span>, <span class="num">Integer</span>&gt; remaining = <span class="kw">new</span> <span class="fn">HashMap</span>&lt;&gt;();
+  <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; solution.length(); i++) {
+    <span class="kw">if</span> (solution.<span class="fn">charAt</span>(i) == guess.<span class="fn">charAt</span>(i))
+      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.<span class="fn">charAt</span>(i), <span class="num">LetterState</span>.CORRECT));
+    <span class="kw">else</span>
+      remaining.<span class="fn">merge</span>(solution.<span class="fn">charAt</span>(i), 1, Integer::<span class="fn">sum</span>);
+  }
+  <span class="cm">// 3. Zweiter Durchlauf: PRESENT (Buchstabe falsch platziert)</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; guess.length(); i++) {
+    <span class="kw">if</span> (letters.<span class="fn">get</span>(i).state() == <span class="num">LetterState</span>.CORRECT) <span class="kw">continue</span>;
+    <span class="kw">int</span> rem = remaining.<span class="fn">getOrDefault</span>(guess.<span class="fn">charAt</span>(i), 0);
+    <span class="kw">if</span> (rem &gt; 0) {
+      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.<span class="fn">charAt</span>(i), <span class="num">LetterState</span>.PRESENT));
+      remaining.<span class="fn">put</span>(guess.<span class="fn">charAt</span>(i), rem - 1);
+    }
+  }
+  <span class="kw">return new</span> <span class="num">GuessEvaluation</span>(guess, List.<span class="fn">copyOf</span>(letters));
+}</div>
+        </div>
+
+        <!-- Schritt 5 -->
+        <div class="flow-step" data-step="5">
+          <div class="flow-step__header">
+            <div class="flow-step__num">5</div>
+            <div class="flow-step__title">GameStateResponse wird als JSON zurückgesendet</div>
+          </div>
+          <div class="flow-step__desc">
+            Spring Boot serialisiert das Java-Record automatisch zu JSON.
+            <code>solution</code> ist nur enthalten, wenn das Spiel bereits beendet ist —
+            sonst <code>null</code>, damit das Lösungswort verborgen bleibt.
+          </div>
+          <div class="flow-step__code"><span class="cm">// GameStateResponse.java — Record (automatisch JSON-serialisierbar)</span>
+<span class="kw">public record</span> <span class="num">GameStateResponse</span>(
+    <span class="num">UUID</span>                  gameId,
+    <span class="kw">int</span>                   wordLength,
+    <span class="kw">int</span>                   maxAttempts,
+    <span class="kw">int</span>                   attemptCount,
+    <span class="num">GameStatus</span>            status,      <span class="cm">// IN_PROGRESS | WON | LOST</span>
+    List&lt;<span class="num">GuessEvaluation</span>&gt; guesses,
+    <span class="num">String</span>                message,
+    <span class="num">String</span>                solution     <span class="cm">// null solange IN_PROGRESS</span>
+) {}
+
+<span class="cm">// Beispiel-JSON-Antwort:</span>
+<span class="cm">// {</span>
+<span class="cm">//   "gameId": "a1b2-...",</span>
+<span class="cm">//   "status": "IN_PROGRESS",</span>
+<span class="cm">//   "attemptCount": 1,</span>
+<span class="cm">//   "guesses": [{ "word": "STEIN",</span>
+<span class="cm">//     "letters": [</span>
+<span class="cm">//       {"letter":"S","state":"ABSENT"},</span>
+<span class="cm">//       {"letter":"T","state":"CORRECT"},</span>
+<span class="cm">//       {"letter":"E","state":"PRESENT"},</span>
+<span class="cm">//       {"letter":"I","state":"ABSENT"},</span>
+<span class="cm">//       {"letter":"N","state":"ABSENT"}</span>
+<span class="cm">//     ]}],</span>
+<span class="cm">//   "solution": null</span>
+<span class="cm">// }</span></div>
+        </div>
+
+        <!-- Schritt 6 -->
+        <div class="flow-step" data-step="6">
+          <div class="flow-step__header">
+            <div class="flow-step__num">6</div>
+            <div class="flow-step__title">renderBoard() malt die farbigen Kacheln</div>
+          </div>
+          <div class="flow-step__desc">
+            Der Browser empfängt die JSON-Antwort. <code>state.game</code> wird aktualisiert,
+            dann ruft <code>render()</code> alle Darstellungsfunktionen auf.
+            <code>renderBoard()</code> erstellt DOM-Elemente für jede Kachel mit CSS-Klassen
+            <code>tile--correct</code>, <code>tile--present</code> oder <code>tile--absent</code>.
+          </div>
+          <div class="flow-step__code"><span class="cm">// app.js — renderBoard() (vereinfacht)</span>
+<span class="kw">function</span> <span class="fn">renderBoard</span>() {
+  elements.board.innerHTML = <span class="str">""</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> row = 0; row &lt; MAX_ATTEMPTS; row++) {
+    <span class="kw">const</span> pastGuess = state.game?.guesses?.[row];
+    <span class="kw">for</span> (<span class="kw">let</span> col = 0; col &lt; wordLength; col++) {
+      <span class="kw">if</span> (pastGuess) {
+        <span class="kw">const</span> ev = pastGuess.letters[col];
+        <span class="cm">// ev.state = "CORRECT" | "PRESENT" | "ABSENT"</span>
+        row.<span class="fn">append</span>(<span class="fn">createTile</span>(ev.letter, ev.state, <span class="cm">/*revealed=*/</span><span class="kw">true</span>));
+      }
+    }
+  }
+}
+
+<span class="cm">// createTile setzt die CSS-Klassen:</span>
+<span class="cm">// tile--correct  → grün  (richtiger Buchstabe, richtige Position)</span>
+<span class="cm">// tile--present  → gelb  (Buchstabe im Wort, falsche Position)</span>
+<span class="cm">// tile--absent   → grau  (Buchstabe nicht im Wort)</span>
+
+<span class="cm">// Visuelles Ergebnis für "STEIN" (Lösung: "TINTE"):</span>
+<span class="kw">const</span> demo = [
+  { letter: <span class="str">"S"</span>, bg: <span class="str">"#3a3a3c"</span> }, <span class="cm">// ABSENT</span>
+  { letter: <span class="str">"T"</span>, bg: <span class="str">"#538d4e"</span> }, <span class="cm">// CORRECT ✓</span>
+  { letter: <span class="str">"E"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
+  { letter: <span class="str">"I"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
+  { letter: <span class="str">"N"</span>, bg: <span class="str">"#538d4e"</span> }, <span class="cm">// CORRECT ✓</span>
+];</div>
+        </div>
+
+      </div><!-- /.flow-steps -->
     </section>
   </div>
 </body>
