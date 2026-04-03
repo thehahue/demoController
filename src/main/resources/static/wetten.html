@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wettveranstaltungen</title>
+    <style>
+        :root {
+            --bg: #f4efe5;
+            --panel: rgba(255, 252, 245, 0.92);
+            --panel-strong: #fffdf8;
+            --text: #1f1a16;
+            --muted: #6f665f;
+            --accent: #0f766e;
+            --accent-dark: #115e59;
+            --accent-soft: #d6f5ef;
+            --border: #d8cfc4;
+            --danger: #b42318;
+            --success: #166534;
+            --shadow: 0 20px 40px rgba(73, 52, 30, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--text);
+            background:
+                    radial-gradient(circle at top left, rgba(15, 118, 110, 0.22), transparent 28%),
+                    radial-gradient(circle at bottom right, rgba(191, 124, 46, 0.18), transparent 35%),
+                    linear-gradient(135deg, #f7f1e4, #eee6d5 48%, #f8f5ec);
+        }
+
+        main {
+            max-width: 1180px;
+            margin: 40px auto;
+            padding: 0 18px 36px;
+        }
+
+        .hero {
+            display: grid;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3.8rem);
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 720px;
+            font-size: 1.05rem;
+            color: var(--muted);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(320px, 430px) minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid rgba(145, 128, 111, 0.26);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(6px);
+        }
+
+        .panel h2 {
+            margin: 0 0 10px;
+            font-size: 1.4rem;
+        }
+
+        .panel p {
+            margin: 0 0 18px;
+            color: var(--muted);
+        }
+
+        form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        label {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        input,
+        select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: var(--panel-strong);
+            border-radius: 14px;
+            padding: 12px 14px;
+            font: inherit;
+            color: var(--text);
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid rgba(15, 118, 110, 0.2);
+            border-color: var(--accent);
+        }
+
+        button {
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, var(--accent), #14b8a6);
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+            box-shadow: 0 12px 20px rgba(15, 118, 110, 0.22);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, var(--accent-dark), #0d9488);
+        }
+
+        .secondary {
+            background: #efe7d8;
+            color: var(--text);
+            box-shadow: none;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .status {
+            min-height: 24px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .status.error {
+            color: var(--danger);
+        }
+
+        .status.success {
+            color: var(--success);
+        }
+
+        .hint {
+            margin-top: -4px;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .teilnehmer-liste {
+            display: grid;
+            gap: 12px;
+        }
+
+        .teilnehmer-block {
+            display: grid;
+            gap: 10px;
+            padding: 14px;
+            border: 1px solid rgba(145, 128, 111, 0.22);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .teilnehmer-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .teilnehmer-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .quote-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .small-btn {
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            box-shadow: none;
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(145, 128, 111, 0.22);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .event-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .event-head h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent-dark);
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            color: var(--muted);
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .quotes {
+            display: grid;
+            gap: 8px;
+        }
+
+        .quote-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #f7f4ee;
+        }
+
+        .empty {
+            padding: 18px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px dashed var(--border);
+            color: var(--muted);
+        }
+
+        pre {
+            margin: 16px 0 0;
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 14px;
+            border-radius: 14px;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .row,
+            .event-head,
+            .quote-row,
+            .quote-grid {
+                grid-template-columns: 1fr;
+                display: grid;
+            }
+
+            .event-head {
+                justify-content: start;
+            }
+
+            .teilnehmer-top {
+                align-items: start;
+            }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section class="hero">
+        <h1>Wettveranstaltungen verwalten</h1>
+        <p>Diese Seite nutzt AJAX mit <code>POST /wetten/veranstaltungen</code> und <code>GET /wetten/veranstaltungen</code>, um neue Veranstaltungen anzulegen und alle vorhandenen direkt anzuzeigen.</p>
+    </section>
+
+    <section class="layout">
+        <article class="panel">
+            <h2>Neue Veranstaltung</h2>
+            <p>Jeder Teilnehmer hat genau drei Quoten: Gewinn, Verlust und Unentschieden. Das Ergebnismuster ist jetzt eine feste Auswahl und steuert das Anzeigeformat der Veranstaltung.</p>
+
+            <form id="wettForm">
+                <div class="field">
+                    <label for="bezeichnung">Bezeichnung</label>
+                    <input id="bezeichnung" name="bezeichnung" type="text" placeholder="z.B. Champions League Finale" required>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="typ">Typ</label>
+                        <input id="typ" name="typ" type="text" placeholder="z.B. Fussball" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="ergebnisMuster">Ergebnismuster</label>
+                        <select id="ergebnisMuster" name="ergebnisMuster" required></select>
+                        <div id="musterHint" class="hint">Bitte ein festes Ergebnismuster auswaehlen.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="datum">Datum</label>
+                        <input id="datum" name="datum" type="date" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="uhrzeit">Uhrzeit</label>
+                        <input id="uhrzeit" name="uhrzeit" type="time" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Teilnehmer und Quoten</label>
+                    <div id="teilnehmerListe" class="teilnehmer-liste"></div>
+                    <div class="toolbar">
+                        <button id="addTeilnehmerBtn" class="secondary small-btn" type="button">Teilnehmer hinzufuegen</button>
+                    </div>
+                    <div class="hint">Komma und Punkt sind bei Quoten erlaubt.</div>
+                </div>
+
+                <button type="submit">Veranstaltung speichern</button>
+            </form>
+
+            <div id="status" class="status"></div>
+            <pre id="result">Noch keine Anfrage gesendet.</pre>
+        </article>
+
+        <article class="panel">
+            <h2>Alle Veranstaltungen</h2>
+            <p>Die Liste wird auf Knopfdruck geladen und nach erfolgreichem Speichern automatisch aktualisiert.</p>
+
+            <div class="toolbar">
+                <button id="reloadBtn" type="button">Liste laden</button>
+                <button id="exampleBtn" class="secondary" type="button">Beispieldaten einsetzen</button>
+            </div>
+
+            <div id="listStatus" class="status"></div>
+            <div id="veranstaltungen" class="grid">
+                <div class="empty">Noch keine Veranstaltungen geladen.</div>
+            </div>
+        </article>
+    </section>
+</main>
+
+<script>
+    const form = document.getElementById("wettForm");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const exampleBtn = document.getElementById("exampleBtn");
+    const addTeilnehmerBtn = document.getElementById("addTeilnehmerBtn");
+    const statusEl = document.getElementById("status");
+    const listStatusEl = document.getElementById("listStatus");
+    const resultEl = document.getElementById("result");
+    const veranstaltungenEl = document.getElementById("veranstaltungen");
+    const teilnehmerListeEl = document.getElementById("teilnehmerListe");
+    const typInput = document.getElementById("typ");
+    const ergebnisMusterInput = document.getElementById("ergebnisMuster");
+    const musterHintEl = document.getElementById("musterHint");
+    const ergebnisMusterOptionen = [
+        { value: "ERGEBNISSTAND", label: "X:X" },
+        { value: "ERGEBNISSTAND_NACH_VERLAENGERUNG", label: "X:X n.V." },
+        { value: "ERGEBNISSTAND_NACH_PENALTY", label: "X:X n.P." },
+        { value: "SATZERGEBNIS", label: "X:X Saetze" },
+        { value: "SATZDETAIL", label: "X:X, X:X, X:X" },
+        { value: "KO_RUNDE", label: "KO Runde X" },
+        { value: "TKO_RUNDE", label: "TKO Runde X" },
+        { value: "PUNKTSIEG", label: "Punktsieg" }
+    ];
+
+    const musterVorlagen = {
+        fussball: ["ERGEBNISSTAND", "ERGEBNISSTAND_NACH_VERLAENGERUNG"],
+        tennis: ["SATZERGEBNIS", "SATZDETAIL"],
+        boxen: ["KO_RUNDE", "TKO_RUNDE", "PUNKTSIEG"],
+        tischtennis: ["SATZERGEBNIS", "SATZDETAIL"],
+        basketball: ["ERGEBNISSTAND", "ERGEBNISSTAND_NACH_VERLAENGERUNG"],
+        eishockey: ["ERGEBNISSTAND", "ERGEBNISSTAND_NACH_VERLAENGERUNG", "ERGEBNISSTAND_NACH_PENALTY"]
+    };
+
+    function setStatus(element, message, cssClass) {
+        element.className = "status " + (cssClass || "");
+        element.textContent = message;
+    }
+
+    function normalizeTyp(value) {
+        return value
+            .toLowerCase()
+            .normalize("NFD")
+            .replaceAll(/[\u0300-\u036f]/g, "")
+            .replace("ß", "ss")
+            .trim();
+    }
+
+    function getMusterVorschlaege(typ) {
+        const normalizedTyp = normalizeTyp(typ);
+        return musterVorlagen[normalizedTyp] || ergebnisMusterOptionen.map((option) => option.value);
+    }
+
+    function renderMusterVorschlaege() {
+        const vorschlaege = getMusterVorschlaege(typInput.value);
+        const bisherigerWert = ergebnisMusterInput.value;
+        const optionen = vorschlaege
+            .map((value) => ergebnisMusterOptionen.find((option) => option.value === value))
+            .filter(Boolean);
+
+        ergebnisMusterInput.innerHTML = optionen.map((option) =>
+            '<option value="' + escapeHtml(option.value) + '">' + escapeHtml(option.label) + '</option>'
+        ).join("");
+
+        if (optionen.some((option) => option.value === bisherigerWert)) {
+            ergebnisMusterInput.value = bisherigerWert;
+        } else {
+            ergebnisMusterInput.value = optionen[0] ? optionen[0].value : "";
+        }
+
+        if (musterVorlagen[normalizeTyp(typInput.value)]) {
+            musterHintEl.textContent = "Passende Enum-Auswahl fuer diese Sportart.";
+            return;
+        }
+
+        musterHintEl.textContent = "Keine feste Sportart-Zuordnung gefunden. Allgemeines Ergebnismuster waehlen.";
+    }
+
+    function safeJsonParse(text) {
+        try {
+            return JSON.parse(text);
+        } catch (_) {
+            return null;
+        }
+    }
+
+    function createTeilnehmerBlock(values) {
+        const index = teilnehmerListeEl.children.length + 1;
+        const wrapper = document.createElement("div");
+        wrapper.className = "teilnehmer-block";
+        wrapper.innerHTML =
+            '<div class="teilnehmer-top">' +
+                '<div class="teilnehmer-title">Teilnehmer ' + index + '</div>' +
+                '<button type="button" class="secondary small-btn remove-teilnehmer">Entfernen</button>' +
+            '</div>' +
+            '<div class="field">' +
+                '<label>Teilnehmername</label>' +
+                '<input type="text" class="teilnehmer-name" placeholder="z.B. FC Nordstadt">' +
+            '</div>' +
+            '<div class="quote-grid">' +
+                '<div class="field">' +
+                    '<label>Gewinn</label>' +
+                    '<input type="text" class="quote-gewinn" placeholder="1,85">' +
+                '</div>' +
+                '<div class="field">' +
+                    '<label>Verlust</label>' +
+                    '<input type="text" class="quote-verlust" placeholder="2,10">' +
+                '</div>' +
+                '<div class="field">' +
+                    '<label>Unentschieden</label>' +
+                    '<input type="text" class="quote-unentschieden" placeholder="3,20">' +
+                '</div>' +
+            '</div>';
+
+        if (values) {
+            wrapper.querySelector(".teilnehmer-name").value = values.name || "";
+            wrapper.querySelector(".quote-gewinn").value = values.gewinn || "";
+            wrapper.querySelector(".quote-verlust").value = values.verlust || "";
+            wrapper.querySelector(".quote-unentschieden").value = values.unentschieden || "";
+        }
+
+        wrapper.querySelector(".remove-teilnehmer").addEventListener("click", () => {
+            wrapper.remove();
+            renumberTeilnehmer();
+        });
+
+        teilnehmerListeEl.appendChild(wrapper);
+        renumberTeilnehmer();
+    }
+
+    function renumberTeilnehmer() {
+        Array.from(teilnehmerListeEl.children).forEach((block, index) => {
+            block.querySelector(".teilnehmer-title").textContent = "Teilnehmer " + (index + 1);
+        });
+    }
+
+    function getTeilnehmerDaten() {
+        return Array.from(teilnehmerListeEl.querySelectorAll(".teilnehmer-block")).map((block) => ({
+            name: block.querySelector(".teilnehmer-name").value.trim(),
+            gewinn: block.querySelector(".quote-gewinn").value.trim(),
+            verlust: block.querySelector(".quote-verlust").value.trim(),
+            unentschieden: block.querySelector(".quote-unentschieden").value.trim()
+        }));
+    }
+
+    function buildPayload() {
+        const teilnehmerDaten = getTeilnehmerDaten();
+
+        return {
+            bezeichnung: form.bezeichnung.value.trim(),
+            typ: form.typ.value.trim(),
+            ergebnisMuster: form.ergebnisMuster.value,
+            datum: form.datum.value,
+            uhrzeit: form.uhrzeit.value,
+            teilnehmer: teilnehmerDaten.map((eintrag) => eintrag.name),
+            wettquoten: teilnehmerDaten.map((eintrag) => ({
+                gewinn: parseQuote(eintrag.gewinn),
+                verlust: parseQuote(eintrag.verlust),
+                unentschieden: parseQuote(eintrag.unentschieden)
+            }))
+        };
+    }
+
+    function parseQuote(value) {
+        return Number(value.replace(",", "."));
+    }
+
+    function validatePayload(payload) {
+        const teilnehmerDaten = getTeilnehmerDaten();
+
+        if (payload.teilnehmer.length === 0) {
+            return "Bitte mindestens einen Teilnehmer eingeben.";
+        }
+
+        if (payload.wettquoten.length === 0) {
+            return "Bitte mindestens einen Quotensatz eingeben.";
+        }
+
+        if (payload.teilnehmer.length !== payload.wettquoten.length) {
+            return "Teilnehmer und Wettquoten muessen gleich viele Zeilen haben.";
+        }
+
+        if (teilnehmerDaten.some((eintrag) => !eintrag.name)) {
+            return "Jeder Teilnehmer braucht einen Namen.";
+        }
+
+        if (payload.wettquoten.some((quote) =>
+            !Number.isFinite(quote.gewinn) || quote.gewinn <= 0 ||
+            !Number.isFinite(quote.verlust) || quote.verlust <= 0 ||
+            !Number.isFinite(quote.unentschieden) || quote.unentschieden <= 0
+        )) {
+            return "Jeder Teilnehmer braucht drei gueltige Quoten groesser als 0. Komma und Punkt sind erlaubt.";
+        }
+
+        if (!payload.ergebnisMuster) {
+            return "Bitte ein Ergebnismuster auswaehlen.";
+        }
+
+        return null;
+    }
+
+    function renderVeranstaltungen(veranstaltungen) {
+        if (!Array.isArray(veranstaltungen) || veranstaltungen.length === 0) {
+            veranstaltungenEl.innerHTML = '<div class="empty">Noch keine Wettveranstaltungen vorhanden.</div>';
+            return;
+        }
+
+        veranstaltungenEl.innerHTML = veranstaltungen.map((veranstaltung) => {
+            const quotes = veranstaltung.teilnehmer.map((teilnehmer, index) => {
+                const quote = normalizeQuote(veranstaltung.wettquoten, index);
+                return '<div class="quote-row"><strong>' +
+                    escapeHtml(teilnehmer) +
+                    '</strong><span>G: ' +
+                    escapeHtml(String(quote.gewinn)) +
+                    ' | V: ' +
+                    escapeHtml(String(quote.verlust)) +
+                    ' | U: ' +
+                    escapeHtml(String(quote.unentschieden)) +
+                    '</span></div>';
+            }).join("");
+
+            return '<section class="event-card">' +
+                '<div class="event-head">' +
+                '<div><h3>' + escapeHtml(veranstaltung.bezeichnung) + '</h3></div>' +
+                '<span class="badge">#' + escapeHtml(String(veranstaltung.id)) + '</span>' +
+                '</div>' +
+                '<div class="meta">' +
+                '<span>Typ: ' + escapeHtml(veranstaltung.typ) + '</span>' +
+                '<span>Ergebnismuster: ' + escapeHtml(veranstaltung.ergebnisMuster || veranstaltung.ergebnisTyp || "-") + '</span>' +
+                '<span>Datum: ' + escapeHtml(veranstaltung.datum) + '</span>' +
+                '<span>Uhrzeit: ' + escapeHtml(veranstaltung.uhrzeit) + '</span>' +
+                '</div>' +
+                '<div class="quotes">' + quotes + '</div>' +
+                '</section>';
+        }).join("");
+    }
+
+    function normalizeQuote(wettquoten, index) {
+        if (!Array.isArray(wettquoten)) {
+            return {
+                gewinn: "-",
+                verlust: "-",
+                unentschieden: "-"
+            };
+        }
+
+        const quote = wettquoten[index];
+
+        if (quote == null) {
+            return {
+                gewinn: "-",
+                verlust: "-",
+                unentschieden: "-"
+            };
+        }
+
+        if (typeof quote === "number" || typeof quote === "string") {
+            return {
+                gewinn: quote,
+                verlust: "-",
+                unentschieden: "-"
+            };
+        }
+
+        return {
+            gewinn: quote.gewinn ?? "-",
+            verlust: quote.verlust ?? "-",
+            unentschieden: quote.unentschieden ?? "-"
+        };
+    }
+
+    function escapeHtml(value) {
+        return value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+    }
+
+    async function ladeVeranstaltungen() {
+        setStatus(listStatusEl, "Lade Veranstaltungen...", "");
+
+        try {
+            const response = await fetch("/wetten/veranstaltungen");
+            const raw = await response.text();
+            const parsed = safeJsonParse(raw);
+
+            if (!response.ok) {
+                const message = parsed && parsed.message ? parsed.message : "Fehler beim Laden.";
+                setStatus(listStatusEl, "Fehler " + response.status + ": " + message, "error");
+                veranstaltungenEl.innerHTML = '<div class="empty">Die Liste konnte nicht geladen werden.</div>';
+                return;
+            }
+
+            setStatus(listStatusEl, parsed.length + " Veranstaltung(en) geladen.", "success");
+            renderVeranstaltungen(parsed);
+        } catch (err) {
+            setStatus(listStatusEl, "Netzwerkfehler: " + err.message, "error");
+            veranstaltungenEl.innerHTML = '<div class="empty">Die Liste konnte nicht geladen werden.</div>';
+        }
+    }
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const payload = buildPayload();
+        const validationMessage = validatePayload(payload);
+
+        if (validationMessage) {
+            setStatus(statusEl, validationMessage, "error");
+            resultEl.textContent = "Request wurde nicht gesendet.";
+            return;
+        }
+
+        setStatus(statusEl, "Sende Daten...", "");
+
+        try {
+            const response = await fetch("/wetten/veranstaltungen", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const raw = await response.text();
+            const parsed = safeJsonParse(raw);
+
+            if (!response.ok) {
+                const message = parsed && parsed.message ? parsed.message : "Fehler beim Speichern.";
+                setStatus(statusEl, "Fehler " + response.status + ": " + message, "error");
+                resultEl.textContent = raw || "Keine weiteren Details.";
+                return;
+            }
+
+            setStatus(statusEl, "Veranstaltung erfolgreich gespeichert.", "success");
+            resultEl.textContent = JSON.stringify(parsed, null, 2);
+            await ladeVeranstaltungen();
+        } catch (err) {
+            setStatus(statusEl, "Netzwerkfehler: " + err.message, "error");
+            resultEl.textContent = "Request konnte nicht ausgefuehrt werden.";
+        }
+    });
+
+    reloadBtn.addEventListener("click", ladeVeranstaltungen);
+    addTeilnehmerBtn.addEventListener("click", () => createTeilnehmerBlock());
+    typInput.addEventListener("input", renderMusterVorschlaege);
+
+    exampleBtn.addEventListener("click", () => {
+        form.bezeichnung.value = "Champions League Finale";
+        form.typ.value = "Fussball";
+        renderMusterVorschlaege();
+        form.ergebnisMuster.value = "ERGEBNISSTAND";
+        form.datum.value = "2026-06-12";
+        form.uhrzeit.value = "20:45";
+        teilnehmerListeEl.innerHTML = "";
+        createTeilnehmerBlock({
+            name: "FC Nordstadt",
+            gewinn: "1,85",
+            verlust: "2,10",
+            unentschieden: "3,20"
+        });
+        createTeilnehmerBlock({
+            name: "SV Suedstadt",
+            gewinn: "2,30",
+            verlust: "1,70",
+            unentschieden: "3,05"
+        });
+        setStatus(statusEl, "Beispieldaten wurden eingesetzt.", "");
+    });
+
+    createTeilnehmerBlock();
+    createTeilnehmerBlock();
+    renderMusterVorschlaege();
+    ladeVeranstaltungen();
+</script>
+</body>
+</html>
