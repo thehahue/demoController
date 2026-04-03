@@ -619,5 +619,32 @@
       </div><!-- /.flow-steps -->
     </section>
   </div>
+
+  <script>
+    let currentStep = 0;
+    const TOTAL_STEPS = 6;
+
+    function flowNext() {
+      if (currentStep >= TOTAL_STEPS) return;
+      currentStep++;
+      document.querySelector(`[data-step="${currentStep}"]`).classList.add('visible');
+      updateControls();
+    }
+
+    function flowReset() {
+      currentStep = 0;
+      document.querySelectorAll('.flow-step').forEach(el => el.classList.remove('visible'));
+      updateControls();
+      document.getElementById('flowSteps').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateControls() {
+      document.getElementById('btnNext').disabled = currentStep >= TOTAL_STEPS;
+      document.getElementById('flowCounter').textContent =
+        `Schritt ${currentStep} / ${TOTAL_STEPS}`;
+    }
+
+    updateControls();
+  </script>
 </body>
 </html>
