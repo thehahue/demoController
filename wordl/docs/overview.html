@@ -237,13 +237,27 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      position: sticky;
-      bottom: 0;
-      background: var(--bg);
-      padding: 0.75rem 0;
-      border-top: 1px solid var(--border);
-      z-index: 10;
+      margin-bottom: 1.5rem;
     }
+
+    .flow-btn-fixed {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--blue);
+      color: #0f172a;
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      z-index: 100;
+      transition: opacity 0.15s;
+    }
+
+    .flow-btn-fixed:disabled { opacity: 0.25; cursor: not-allowed; }
 
     .flow-btn {
       background: var(--blue);
@@ -638,6 +652,8 @@
     </footer>
   </div>
 
+  <button class="flow-btn-fixed" id="btnNextFixed" onclick="flowNext()">Weiter ▶</button>
+
   <script>
     let currentStep = 0;
     const TOTAL_STEPS = 6;
@@ -657,7 +673,9 @@
     }
 
     function updateControls() {
-      document.getElementById('btnNext').disabled = currentStep >= TOTAL_STEPS;
+      const done = currentStep >= TOTAL_STEPS;
+      document.getElementById('btnNext').disabled = done;
+      document.getElementById('btnNextFixed').disabled = done;
       document.getElementById('flowCounter').textContent =
         `Schritt ${currentStep} / ${TOTAL_STEPS}`;
     }
