@@ -1,0 +1,824 @@
+# Wordl Übersichtsgrafik Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Erstelle `docs/overview.html` — eine eigenständige interaktive HTML-Seite, die das Wordl-Projekt für fortgeschrittene Schüler erklärt: Systemarchitektur oben, animierter Request-Flow unten.
+
+**Architecture:** Einzelne HTML-Datei mit inline CSS (Dark-Theme) und inline Vanilla-JS. Keine externen Abhängigkeiten. Zwei Sektionen: (1) statisches Architekturdiagramm mit zwei Spring-Boot-Boxen und hochkontrastigem HTTP-Pfeil, (2) schrittweise aufdeckbarer Request-Flow mit echten Code-Ausschnitten aus den Projektdateien.
+
+**Tech Stack:** HTML5, CSS3, Vanilla JS — keine Build-Tools, keine Frameworks, offline nutzbar.
+
+---
+
+## Dateien
+
+| Aktion  | Pfad                | Verantwortung                         |
+|---------|---------------------|---------------------------------------|
+| Erstellen | `docs/overview.html` | Gesamte Seite: CSS + HTML + JS in einer Datei |
+
+---
+
+### Task 1: HTML-Skelett mit Dark-Theme und Seitenstruktur
+
+**Files:**
+- Create: `docs/overview.html`
+
+- [ ] **Schritt 1: Datei anlegen**
+
+Erstelle `docs/overview.html` mit folgendem Inhalt:
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordl — Projektübersicht</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273548;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --green: #4ade80;
+      --green-bg: #052e16;
+      --green-border: #166534;
+      --blue: #60a5fa;
+      --blue-bg: #1e3a5f;
+      --blue-border: #1d4ed8;
+      --orange: #fb923c;
+      --orange-bg: #431407;
+      --orange-border: #c2410c;
+      --yellow: #fbbf24;
+      --yellow-bg: #451a03;
+      --yellow-border: #b45309;
+      --purple: #a78bfa;
+      --red: #f87171;
+      --correct: #538d4e;
+      --present: #b59f3b;
+      --absent: #3a3a3c;
+      --font-mono: 'Courier New', Courier, monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--green);
+    }
+
+    header p {
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    section {
+      margin-bottom: 4rem;
+    }
+
+    section > h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      border-left: 4px solid var(--blue);
+      padding-left: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>WORDL</h1>
+      <p>Projektübersicht — Frontend &amp; Backend Architektur</p>
+    </header>
+
+    <section id="architecture">
+      <h2>1. Systemarchitektur</h2>
+      <!-- Task 2 -->
+    </section>
+
+    <section id="flow">
+      <h2>2. Ein Spielzug — Schritt für Schritt</h2>
+      <!-- Task 3 + 4 -->
+    </section>
+  </div>
+</body>
+</html>
+```
+
+- [ ] **Schritt 2: Im Browser prüfen**
+
+Öffne `docs/overview.html` direkt im Browser (Datei-URL genügt).
+Erwartetes Ergebnis: Dunkle Seite mit "WORDL" grün oben, zwei leere Sektionen mit blauen Balken links.
+
+- [ ] **Schritt 3: Committen**
+
+```bash
+git add docs/overview.html
+git commit -m "feat: add overview page skeleton with dark theme"
+```
+
+---
+
+### Task 2: Architekturdiagramm (Sektion 1)
+
+**Files:**
+- Modify: `docs/overview.html` — ersetze `<!-- Task 2 -->` durch das Diagramm und füge CSS in `<style>` hinzu
+
+- [ ] **Schritt 1: CSS für das Diagramm ergänzen**
+
+Füge folgende Regeln **am Ende des `<style>`-Blocks** ein (vor `</style>`):
+
+```css
+/* ── Architekturdiagramm ────────────────────────────── */
+.arch-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.arch-box {
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  min-width: 180px;
+  text-align: center;
+}
+
+.arch-box--frontend {
+  background: var(--green-bg);
+  border: 2px solid var(--green);
+}
+
+.arch-box--backend {
+  background: var(--blue-bg);
+  border: 2px solid var(--blue);
+}
+
+.arch-box__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.arch-box--frontend .arch-box__title { color: var(--green); }
+.arch-box--backend  .arch-box__title { color: var(--blue); }
+
+.arch-box__detail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}
+
+.arch-box__layers {
+  margin-top: 0.6rem;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  text-align: left;
+  color: var(--text-muted);
+}
+
+.arch-box__layers span {
+  display: block;
+  padding: 2px 0;
+}
+
+.arch-box__layers span::before { content: "├ "; }
+.arch-box__layers span:last-child::before { content: "└ "; }
+
+.arch-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+  min-width: 220px;
+}
+
+.arch-arrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.arch-arrow--request {
+  background: var(--orange-bg);
+  border: 1px solid var(--orange-border);
+  color: #fed7aa;
+}
+
+.arch-arrow--response {
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-border);
+  color: #bfdbfe;
+}
+
+.arch-arrow__symbol {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.arch-label {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.cors-note {
+  background: var(--yellow-bg);
+  border: 1px solid var(--yellow-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #fef3c7;
+}
+
+.cors-note strong { color: var(--yellow); }
+
+.package-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.package-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+}
+
+.package-box__title {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.85rem;
+}
+
+.package-box--frontend .package-box__title { color: var(--green); }
+.package-box--backend  .package-box__title { color: var(--blue); }
+
+.package-box span {
+  display: block;
+  color: var(--text-muted);
+  padding: 1px 0;
+}
+```
+
+- [ ] **Schritt 2: HTML für Sektion 1 einsetzen**
+
+Ersetze `<!-- Task 2 -->` durch:
+
+```html
+<div class="arch-diagram">
+  <div class="arch-box arch-box--frontend">
+    <div class="arch-box__title">🌐 Browser / Frontend</div>
+    <div class="arch-box__detail">Spring Boot · Port 8080<br>statische Dateien</div>
+    <div class="arch-box__layers">
+      <span>index.html</span>
+      <span>styles.css</span>
+      <span>app.js</span>
+    </div>
+  </div>
+
+  <div class="arch-arrows">
+    <div class="arch-arrow arch-arrow--request">
+      <span class="arch-arrow__symbol">→</span>
+      <span>POST /api/games/{id}/guesses<br>{ guess: "STEIN" }</span>
+    </div>
+    <div class="arch-label">HTTP fetch() · JSON · CORS</div>
+    <div class="arch-arrow arch-arrow--response">
+      <span class="arch-arrow__symbol">←</span>
+      <span>200 OK · GameStateResponse<br>{ status, guesses, … }</span>
+    </div>
+  </div>
+
+  <div class="arch-box arch-box--backend">
+    <div class="arch-box__title">⚙️ Backend</div>
+    <div class="arch-box__detail">Spring Boot · Port 8081<br>REST API</div>
+    <div class="arch-box__layers">
+      <span style="color:#93c5fd">GameController</span>
+      <span style="color:#93c5fd">GameService</span>
+      <span>GuessEvaluation</span>
+      <span>LetterState</span>
+    </div>
+  </div>
+</div>
+
+<div class="cors-note">
+  <strong>Warum CORS?</strong> Frontend (Port 8080) und Backend (Port 8081) laufen als
+  <em>separate Prozesse</em>. Browser blockieren standardmäßig Cross-Origin-Anfragen.
+  <code>WebConfig.java</code> erlaubt Anfragen von <code>localhost:*</code> explizit via
+  <code>@Configuration + CorsRegistry</code>.
+</div>
+
+<div class="package-grid">
+  <div class="package-box package-box--frontend">
+    <div class="package-box__title">Frontend-Paketstruktur</div>
+    <span>FrontendApplication.java</span>
+    <span>resources/static/</span>
+    <span>&nbsp;&nbsp;index.html</span>
+    <span>&nbsp;&nbsp;app.js</span>
+    <span>&nbsp;&nbsp;styles.css</span>
+  </div>
+  <div class="package-box package-box--backend">
+    <div class="package-box__title">Backend-Paketstruktur</div>
+    <span>api/ → GameController</span>
+    <span>api/dto/ → Request/Response</span>
+    <span>service/ → GameService</span>
+    <span>game/ → Domain-Klassen</span>
+    <span>config/ → WebConfig (CORS)</span>
+  </div>
+</div>
+```
+
+- [ ] **Schritt 3: Im Browser prüfen**
+
+Seite neu laden. Erwartetes Ergebnis: Drei Boxen nebeneinander — grüne Frontend-Box, orangene Request-/blaue Response-Pfeile mit hohem Kontrast, blaue Backend-Box. CORS-Hinweis in gelb darunter. Paket-Übersicht im 2-Spalten-Grid.
+
+- [ ] **Schritt 4: Committen**
+
+```bash
+git add docs/overview.html
+git commit -m "feat: add architecture diagram section with CORS explanation"
+```
+
+---
+
+### Task 3: Request-Flow HTML (alle 6 Schritte, noch ohne Animation)
+
+**Files:**
+- Modify: `docs/overview.html` — ersetze `<!-- Task 3 + 4 -->` durch Flow-HTML, ergänze CSS
+
+- [ ] **Schritt 1: CSS für den Request-Flow ergänzen**
+
+Füge am Ende des `<style>`-Blocks ein (vor `</style>`):
+
+```css
+/* ── Request Flow ──────────────────────────────────── */
+.flow-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.flow-btn {
+  background: var(--blue);
+  color: #0f172a;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.flow-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.flow-btn--reset { background: var(--surface-2); color: var(--text-muted); }
+
+.flow-counter {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.flow-step {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  animation: fadeSlide 0.3s ease;
+}
+
+.flow-step.visible { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.flow-step__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.flow-step__num {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.flow-step__title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.flow-step__desc {
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.flow-step__code {
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Farben pro Schritt */
+.flow-step:nth-child(1) .flow-step__num { background: #4ade8033; color: var(--green); }
+.flow-step:nth-child(2) .flow-step__num { background: #fbbf2433; color: var(--yellow); }
+.flow-step:nth-child(3) .flow-step__num { background: #fb923c33; color: var(--orange); }
+.flow-step:nth-child(4) .flow-step__num { background: #60a5fa33; color: var(--blue); }
+.flow-step:nth-child(5) .flow-step__num { background: #a78bfa33; color: var(--purple); }
+.flow-step:nth-child(6) .flow-step__num { background: #4ade8033; color: var(--green); }
+
+/* Syntax-Highlight-Hilfsklassen */
+.kw  { color: #c084fc; }   /* keyword */
+.fn  { color: #60a5fa; }   /* function/method */
+.str { color: #4ade80; }   /* string */
+.num { color: #fb923c; }   /* number/type */
+.cm  { color: #64748b; }   /* comment */
+.ann { color: #fbbf24; }   /* annotation */
+```
+
+- [ ] **Schritt 2: HTML für die 6 Schritte einsetzen**
+
+Ersetze `<!-- Task 3 + 4 -->` durch:
+
+```html
+<div class="flow-controls">
+  <button class="flow-btn" id="btnNext" onclick="flowNext()">Weiter ▶</button>
+  <button class="flow-btn flow-btn--reset" id="btnReset" onclick="flowReset()">↺ Neustart</button>
+  <span class="flow-counter" id="flowCounter">Schritt 0 / 6</span>
+</div>
+
+<div class="flow-steps" id="flowSteps">
+
+  <!-- Schritt 1 -->
+  <div class="flow-step" data-step="1">
+    <div class="flow-step__header">
+      <div class="flow-step__num">1</div>
+      <div class="flow-step__title">Spieler drückt ENTER</div>
+    </div>
+    <div class="flow-step__desc">
+      Der Tastendruck landet im globalen <code>keydown</code>-Listener in <code>app.js</code>.
+      Er ruft <code>handleInput("Enter")</code> auf, was wiederum <code>submitGuess()</code> auslöst.
+    </div>
+    <div class="flow-step__code"><span class="cm">// app.js — globaler Tastatur-Listener</span>
+<span class="kw">document</span>.addEventListener(<span class="str">"keydown"</span>, (event) => {
+  <span class="kw">if</span> (event.metaKey || event.ctrlKey || event.altKey) <span class="kw">return</span>;
+  <span class="kw">if</span> (document.activeElement === elements.guessInput) {
+    <span class="kw">if</span> (event.key === <span class="str">"Enter"</span>) {
+      event.preventDefault();
+      <span class="fn">submitGuess</span>();   <span class="cm">// ← hier geht's weiter</span>
+    }
+    <span class="kw">return</span>;
+  }
+  <span class="fn">handleInput</span>(event.key);
+});</div>
+  </div>
+
+  <!-- Schritt 2 -->
+  <div class="flow-step" data-step="2">
+    <div class="flow-step__header">
+      <div class="flow-step__num">2</div>
+      <div class="flow-step__title">fetch() sendet HTTP POST</div>
+    </div>
+    <div class="flow-step__desc">
+      <code>submitGuess()</code> baut einen JSON-Body und sendet ihn per
+      <code>fetch()</code> an das Backend. Die Funktion ist <code>async</code> —
+      der Browser wartet auf die Antwort ohne die Seite zu blockieren.
+    </div>
+    <div class="flow-step__code"><span class="cm">// app.js — submitGuess()</span>
+<span class="kw">async function</span> <span class="fn">submitGuess</span>() {
+  <span class="fn">setBusy</span>(<span class="kw">true</span>);
+  <span class="kw">try</span> {
+    state.game = <span class="kw">await</span> <span class="fn">requestJson</span>(
+      <span class="str">`/games/<span class="num">${state.game.gameId}</span>/guesses`</span>,
+      { method: <span class="str">"POST"</span>, body: <span class="num">JSON</span>.stringify({ guess: state.currentGuess }) }
+    );
+    <span class="cm">// → POST http://localhost:8081/api/games/{uuid}/guesses</span>
+    <span class="cm">// → Body: { "guess": "STEIN" }</span>
+  } <span class="kw">finally</span> {
+    <span class="fn">setBusy</span>(<span class="kw">false</span>);
+    <span class="fn">render</span>();
+  }
+}</div>
+  </div>
+
+  <!-- Schritt 3 -->
+  <div class="flow-step" data-step="3">
+    <div class="flow-step__header">
+      <div class="flow-step__num">3</div>
+      <div class="flow-step__title">GameController empfängt den Request</div>
+    </div>
+    <div class="flow-step__desc">
+      Spring Boot deserialisiert den JSON-Body automatisch in ein <code>GuessRequest</code>-Record.
+      <code>@PathVariable</code> liest die UUID aus der URL. Der Controller delegiert sofort an den Service.
+    </div>
+    <div class="flow-step__code"><span class="cm">// GameController.java</span>
+<span class="ann">@PostMapping</span>(<span class="str">"/{gameId}/guesses"</span>)
+<span class="kw">public</span> <span class="num">GameStateResponse</span> <span class="fn">submitGuess</span>(
+        <span class="ann">@PathVariable</span> <span class="num">UUID</span> gameId,
+        <span class="ann">@RequestBody</span> <span class="num">GuessRequest</span> request) {
+    <span class="cm">// GuessRequest = record { String guess; }</span>
+    <span class="kw">return</span> gameService.<span class="fn">submitGuess</span>(gameId, request);
+}</div>
+  </div>
+
+  <!-- Schritt 4 -->
+  <div class="flow-step" data-step="4">
+    <div class="flow-step__header">
+      <div class="flow-step__num">4</div>
+      <div class="flow-step__title">GameService bewertet den Rateversuch</div>
+    </div>
+    <div class="flow-step__desc">
+      <code>evaluateGuess()</code> vergleicht Buchstaben in zwei Durchläufen:
+      zuerst alle exakten Treffer (<code>CORRECT</code>), dann die Buchstaben
+      im falschen Feld (<code>PRESENT</code>), der Rest bleibt <code>ABSENT</code>.
+    </div>
+    <div class="flow-step__code"><span class="cm">// GameService.java — evaluateGuess()</span>
+<span class="num">GuessEvaluation</span> <span class="fn">evaluateGuess</span>(<span class="num">String</span> guess, <span class="num">String</span> solution) {
+  <span class="cm">// 1. Alle Buchstaben zunächst ABSENT</span>
+  List&lt;<span class="num">LetterEvaluation</span>&gt; letters = <span class="kw">new</span> <span class="fn">ArrayList</span>&lt;&gt;(guess.length());
+  <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; guess.length(); i++)
+    letters.<span class="fn">add</span>(<span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.charAt(i), <span class="num">LetterState</span>.ABSENT));
+
+  <span class="cm">// 2. Erster Durchlauf: CORRECT markieren</span>
+  Map&lt;<span class="num">Character</span>, <span class="num">Integer</span>&gt; remaining = <span class="kw">new</span> <span class="fn">HashMap</span>&lt;&gt;();
+  <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; solution.length(); i++) {
+    <span class="kw">if</span> (solution.<span class="fn">charAt</span>(i) == guess.<span class="fn">charAt</span>(i))
+      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.<span class="fn">charAt</span>(i), <span class="num">LetterState</span>.CORRECT));
+    <span class="kw">else</span>
+      remaining.<span class="fn">merge</span>(solution.<span class="fn">charAt</span>(i), 1, Integer::<span class="fn">sum</span>);
+  }
+  <span class="cm">// 3. Zweiter Durchlauf: PRESENT (Buchstabe falsch platziert)</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; guess.length(); i++) {
+    <span class="kw">if</span> (letters.<span class="fn">get</span>(i).state() == <span class="num">LetterState</span>.CORRECT) <span class="kw">continue</span>;
+    <span class="kw">int</span> rem = remaining.<span class="fn">getOrDefault</span>(guess.<span class="fn">charAt</span>(i), 0);
+    <span class="kw">if</span> (rem &gt; 0) {
+      letters.<span class="fn">set</span>(i, <span class="kw">new</span> <span class="num">LetterEvaluation</span>(guess.<span class="fn">charAt</span>(i), <span class="num">LetterState</span>.PRESENT));
+      remaining.<span class="fn">put</span>(guess.<span class="fn">charAt</span>(i), rem - 1);
+    }
+  }
+  <span class="kw">return new</span> <span class="num">GuessEvaluation</span>(guess, List.<span class="fn">copyOf</span>(letters));
+}</div>
+  </div>
+
+  <!-- Schritt 5 -->
+  <div class="flow-step" data-step="5">
+    <div class="flow-step__header">
+      <div class="flow-step__num">5</div>
+      <div class="flow-step__title">GameStateResponse wird als JSON zurückgesendet</div>
+    </div>
+    <div class="flow-step__desc">
+      Spring Boot serialisiert das Java-Record automatisch zu JSON.
+      <code>solution</code> ist nur enthalten, wenn das Spiel bereits beendet ist —
+      sonst <code>null</code>, damit das Lösungswort verborgen bleibt.
+    </div>
+    <div class="flow-step__code"><span class="cm">// GameStateResponse.java — Record (automatisch JSON-serialisierbar)</span>
+<span class="kw">public record</span> <span class="num">GameStateResponse</span>(
+    <span class="num">UUID</span>                  gameId,
+    <span class="kw">int</span>                   wordLength,
+    <span class="kw">int</span>                   maxAttempts,
+    <span class="kw">int</span>                   attemptCount,
+    <span class="num">GameStatus</span>            status,      <span class="cm">// IN_PROGRESS | WON | LOST</span>
+    List&lt;<span class="num">GuessEvaluation</span>&gt; guesses,
+    <span class="num">String</span>                message,
+    <span class="num">String</span>                solution     <span class="cm">// null solange IN_PROGRESS</span>
+) {}
+
+<span class="cm">// Beispiel-JSON-Antwort:</span>
+<span class="cm">// {</span>
+<span class="cm">//   "gameId": "a1b2-...",</span>
+<span class="cm">//   "status": "IN_PROGRESS",</span>
+<span class="cm">//   "attemptCount": 1,</span>
+<span class="cm">//   "guesses": [{ "word": "STEIN",</span>
+<span class="cm">//     "letters": [</span>
+<span class="cm">//       {"letter":"S","state":"ABSENT"},</span>
+<span class="cm">//       {"letter":"T","state":"CORRECT"},</span>
+<span class="cm">//       {"letter":"E","state":"PRESENT"},</span>
+<span class="cm">//       {"letter":"I","state":"ABSENT"},</span>
+<span class="cm">//       {"letter":"N","state":"ABSENT"}</span>
+<span class="cm">//     ]}],</span>
+<span class="cm">//   "solution": null</span>
+<span class="cm">// }</span></div>
+  </div>
+
+  <!-- Schritt 6 -->
+  <div class="flow-step" data-step="6">
+    <div class="flow-step__header">
+      <div class="flow-step__num">6</div>
+      <div class="flow-step__title">renderBoard() malt die farbigen Kacheln</div>
+    </div>
+    <div class="flow-step__desc">
+      Der Browser empfängt die JSON-Antwort. <code>state.game</code> wird aktualisiert,
+      dann ruft <code>render()</code> alle Darstellungsfunktionen auf.
+      <code>renderBoard()</code> erstellt DOM-Elemente für jede Kachel mit CSS-Klassen
+      <code>tile--correct</code>, <code>tile--present</code> oder <code>tile--absent</code>.
+    </div>
+    <div class="flow-step__code"><span class="cm">// app.js — renderBoard() (vereinfacht)</span>
+<span class="kw">function</span> <span class="fn">renderBoard</span>() {
+  elements.board.innerHTML = <span class="str">""</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> row = 0; row &lt; MAX_ATTEMPTS; row++) {
+    <span class="kw">const</span> pastGuess = state.game?.guesses?.[row];
+    <span class="kw">for</span> (<span class="kw">let</span> col = 0; col &lt; wordLength; col++) {
+      <span class="kw">if</span> (pastGuess) {
+        <span class="kw">const</span> ev = pastGuess.letters[col];
+        <span class="cm">// ev.state = "CORRECT" | "PRESENT" | "ABSENT"</span>
+        row.<span class="fn">append</span>(<span class="fn">createTile</span>(ev.letter, ev.state, <span class="cm">/*revealed=*/</span><span class="kw">true</span>));
+      }
+    }
+  }
+}
+
+<span class="cm">// createTile setzt die CSS-Klassen:</span>
+<span class="cm">// tile--correct  → grün  (richtiger Buchstabe, richtige Position)</span>
+<span class="cm">// tile--present  → gelb  (Buchstabe im Wort, falsche Position)</span>
+<span class="cm">// tile--absent   → grau  (Buchstabe nicht im Wort)</span>
+
+<span class="cm">// Visuelles Ergebnis für "STEIN" (Lösung: "TINTE"):</span>
+<span class="kw">const</span> demo = [
+  { letter: <span class="str">"S"</span>, bg: <span class="str">"#3a3a3c"</span> }, <span class="cm">// ABSENT</span>
+  { letter: <span class="str">"T"</span>, bg: <span class="str">"#538d4e"</span> }, <span class="cm">// CORRECT ✓</span>
+  { letter: <span class="str">"E"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
+  { letter: <span class="str">"I"</span>, bg: <span class="str">"#b59f3b"</span> }, <span class="cm">// PRESENT ~</span>
+  { letter: <span class="str">"N"</span>, bg: <span class="str">"#538d4e"</span> }, <span class="cm">// CORRECT ✓</span>
+];</div>
+  </div>
+
+</div><!-- /.flow-steps -->
+```
+
+- [ ] **Schritt 3: Im Browser prüfen**
+
+Seite neu laden. Erwartetes Ergebnis: "Weiter"-Button sichtbar, aber alle Schritte noch versteckt. Klick auf "Weiter" tut noch nichts (JavaScript fehlt noch).
+
+- [ ] **Schritt 4: Committen**
+
+```bash
+git add docs/overview.html
+git commit -m "feat: add request flow steps HTML and CSS"
+```
+
+---
+
+### Task 4: Step-by-Step-Animation (JavaScript)
+
+**Files:**
+- Modify: `docs/overview.html` — `<script>`-Block vor `</body>` einfügen
+
+- [ ] **Schritt 1: JavaScript einfügen**
+
+Füge direkt vor `</body>` ein:
+
+```html
+<script>
+  let currentStep = 0;
+  const TOTAL_STEPS = 6;
+
+  function flowNext() {
+    if (currentStep >= TOTAL_STEPS) return;
+    currentStep++;
+    document.querySelector(`[data-step="${currentStep}"]`).classList.add('visible');
+    updateControls();
+  }
+
+  function flowReset() {
+    currentStep = 0;
+    document.querySelectorAll('.flow-step').forEach(el => el.classList.remove('visible'));
+    updateControls();
+    document.getElementById('flowSteps').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateControls() {
+    document.getElementById('btnNext').disabled = currentStep >= TOTAL_STEPS;
+    document.getElementById('flowCounter').textContent =
+      `Schritt ${currentStep} / ${TOTAL_STEPS}`;
+  }
+
+  updateControls();
+</script>
+```
+
+- [ ] **Schritt 2: Animation testen**
+
+Browser neu laden. Erwartetes Verhalten:
+- "Schritt 0 / 6" angezeigt, kein Schritt sichtbar
+- Jeder Klick auf "Weiter ▶" deckt den nächsten Schritt auf (mit fadeSlide-Animation)
+- Nach Schritt 6 ist "Weiter" deaktiviert
+- "↺ Neustart" blendet alle Schritte aus und scrollt zurück
+
+- [ ] **Schritt 3: Committen**
+
+```bash
+git add docs/overview.html
+git commit -m "feat: add step-by-step animation for request flow"
+```
+
+---
+
+### Task 5: Feinschliff und Abschluss
+
+**Files:**
+- Modify: `docs/overview.html` — Footer und `.gitignore`-Eintrag
+
+- [ ] **Schritt 1: Footer hinzufügen**
+
+Füge direkt vor `</div><!-- /.page -->` ein:
+
+```html
+<footer style="text-align:center;color:var(--text-muted);font-size:0.8rem;padding:2rem 0 1rem;border-top:1px solid var(--border);margin-top:2rem">
+  Wordl · Spring Boot Frontend (Port 8080) + Backend (Port 8081) · Demo-Projekt
+</footer>
+```
+
+- [ ] **Schritt 2: .superpowers in .gitignore eintragen**
+
+Prüfe ob `.gitignore` existiert und ob `.superpowers/` schon drin steht:
+
+```bash
+grep -q "\.superpowers" /home/hahue/git/demo/wordl/.gitignore 2>/dev/null \
+  || echo ".superpowers/" >> /home/hahue/git/demo/wordl/.gitignore
+```
+
+- [ ] **Schritt 3: Gesamtcheck im Browser**
+
+Öffne `docs/overview.html`. Prüfliste:
+- [ ] Dark Theme korrekt
+- [ ] Architektur-Diagramm: drei Boxen, orange Request-Pfeil, blauer Response-Pfeil sichtbar
+- [ ] CORS-Hinweis gelb sichtbar
+- [ ] Paket-Grid 2-spaltig
+- [ ] "Weiter"-Button deckt Schritte einzeln auf
+- [ ] Alle 6 Schritte zeigen echten Code mit Syntax-Highlighting
+- [ ] "↺ Neustart" setzt zurück
+
+- [ ] **Schritt 4: Abschliessend committen**
+
+```bash
+git add docs/overview.html .gitignore
+git commit -m "feat: finalize overview page with footer and gitignore"
+```
