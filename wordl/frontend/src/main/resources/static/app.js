@@ -26,6 +26,7 @@ const elements = {
 
 const state = {
     selectedWordLength: 5,
+    supportedWordLengths: [4, 5, 6],
     currentGuess: "",
     game: null,
     busy: false
@@ -73,6 +74,16 @@ function setStatusPill() {
 }
 
 function renderSizePicker() {
+    elements.sizePicker.innerHTML = "";
+    state.supportedWordLengths.forEach((wordLength) => {
+        const button = document.createElement("button");
+        button.className = "chip";
+        button.dataset.length = String(wordLength);
+        button.type = "button";
+        button.textContent = String(wordLength);
+        elements.sizePicker.append(button);
+    });
+
     [...elements.sizePicker.querySelectorAll("[data-length]")].forEach((button) => {
         button.classList.toggle("chip--active", Number(button.dataset.length) === state.selectedWordLength);
         button.disabled = state.busy;
@@ -227,6 +238,20 @@ async function requestJson(path, options = {}) {
     return response.json();
 }
 
+async function loadSupportedWordLengths() {
+    try {
+        const supportedWordLengths = await requestJson("/games/word-lengths");
+        if (Array.isArray(supportedWordLengths) && supportedWordLengths.length > 0) {
+            state.supportedWordLengths = supportedWordLengths;
+            if (!state.supportedWordLengths.includes(state.selectedWordLength)) {
+                state.selectedWordLength = state.supportedWordLengths[0];
+            }
+        }
+    } catch (error) {
+        setStatus(error.message, "error");
+    }
+}
+
 async function startNewGame() {
     setBusy(true);
     setStatus("Neues Spiel wird geladen ...");
@@ -352,5 +377,11 @@ document.addEventListener("keydown", (event) => {
     handleInput(event.key);
 });
 
-render();
-startNewGame();
+async function initialize() {
+    render();
+    await loadSupportedWordLengths();
+    render();
+    await startNewGame();
+}
+
+initialize();
