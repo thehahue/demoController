@@ -79,7 +79,7 @@ Wenn das Backend-JAR nicht in einem Maven-Repository liegt, installiere es vorhe
 7. Schreibe den vollqualifizierten Implementierungsnamen in diese Service-Datei.
 8. Baue das Plugin als JAR.
 9. Lege das JAR in denselben Ordner wie das gestartete WORDL-Spiel-JAR.
-10. Starte WORDL neu und pruefe `GET /api/games/word-lengths`.
+10. Warte bis zu 10 Sekunden oder starte WORDL neu und pruefe `GET /api/games/word-lengths`.
 
 ## Abnahmekriterien
 
@@ -87,7 +87,6 @@ Ein Plugin ist korrekt, wenn:
 
 - Das JAR ohne Aenderungen am WORDL-Hauptprojekt erstellt wurde.
 - Das JAR einen gueltigen `META-INF/services`-Eintrag enthaelt.
-- WORDL nach Neustart die neue Wortlaenge in `/api/games/word-lengths` anzeigt.
+- WORDL die neue Wortlaenge nach maximal 10 Sekunden in `/api/games/word-lengths` anzeigt.
 - Ein Spiel mit dieser Wortlaenge per `POST /api/games` gestartet werden kann.
 - Die geratenen Woerter im Spiel genau die neue Laenge verwenden.
-

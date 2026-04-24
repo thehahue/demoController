@@ -29,7 +29,7 @@ public class WordPluginLoader {
     public Map<Integer, List<String>> loadPluginWords() {
         List<Path> pluginJars = findPluginJars();
         if (pluginJars.isEmpty()) {
-            LOGGER.info("No WORDL word plugin JARs found.");
+            LOGGER.debug("No WORDL word plugin JARs found.");
             return Map.of();
         }
 
@@ -91,7 +91,7 @@ public class WordPluginLoader {
         }
 
         wordsByType.computeIfAbsent(type, ignored -> new ArrayList<>()).addAll(words);
-        LOGGER.info("Loaded WORDL word plugin {} for {} letters with {} words.",
+        LOGGER.debug("Discovered WORDL word plugin {} for {} letters with {} words.",
                 plugin.getClass().getName(), type, words.size());
     }
 

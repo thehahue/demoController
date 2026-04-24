@@ -62,4 +62,17 @@ class GameServiceTest {
         assertThat(game.wordLength()).isEqualTo(7);
         assertThat(wordCatalog.supportedLengths()).containsExactly(5, 7);
     }
+
+    @Test
+    void replacesPluginWordsWhenPluginsChange() {
+        WordCatalog wordCatalog = new WordCatalog(
+                Map.of(5, List.of("APPLE")),
+                Map.of(7, List.of("BALANCE")));
+
+        assertThat(wordCatalog.supportedLengths()).containsExactly(5, 7);
+
+        wordCatalog.replacePluginWords(Map.of(8, List.of("NOTEBOOK")));
+
+        assertThat(wordCatalog.supportedLengths()).containsExactly(5, 8);
+    }
 }

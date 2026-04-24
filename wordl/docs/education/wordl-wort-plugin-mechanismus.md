@@ -1,6 +1,6 @@
 # WORDL Wort-Plugin-Mechanismus
 
-Diese Unterlage beschreibt den Plugin-Mechanismus fuer WORDL. Ein Plugin erweitert das Spiel um zusaetzliche Loesungswoerter. Es wird als JAR-Datei in denselben Ordner gelegt wie das gestartete Spiel-JAR und beim Start automatisch geladen.
+Diese Unterlage beschreibt den Plugin-Mechanismus fuer WORDL. Ein Plugin erweitert das Spiel um zusaetzliche Loesungswoerter. Es wird als JAR-Datei in denselben Ordner gelegt wie das gestartete Spiel-JAR und automatisch geladen.
 
 Es wird hier bewusst kein Plugin gebaut. Diese Dokumentation beschreibt nur den Vertrag, damit ein Plugin separat erstellt werden kann.
 
@@ -14,7 +14,7 @@ Der Plugin-Typ ist die Anzahl der Buchstaben:
 - Typ `5` liefert Fuenf-Buchstaben-Woerter.
 - Typ `7` liefert Sieben-Buchstaben-Woerter.
 
-Das Backend kombiniert die eingebauten Wortlisten mit allen geladenen Plugin-Wortlisten. Die Oberflaeche fragt die verfuegbaren Wortlaengen ueber die API ab und zeigt neue Laengen automatisch im Picker an.
+Das Backend kombiniert die eingebauten Wortlisten mit allen aktuell geladenen Plugin-Wortlisten. Der Plugin-Pfad wird alle 10 Sekunden neu geprueft. Neue Plugin-JARs werden dadurch geladen, entfernte Plugin-JARs werden aus dem Wortkatalog entfernt. Die Oberflaeche fragt die verfuegbaren Wortlaengen ueber die API ab und zeigt neue Laengen nach einem erneuten Laden der Oberflaeche im Picker an.
 
 ## 2. Architektur
 
@@ -58,6 +58,11 @@ sequenceDiagram
     Jar-->>Loader: type() und words()
     Loader-->>Catalog: Woerter nach Typ
     Catalog->>Catalog: mit eingebauten Woertern zusammenfuehren
+    loop alle 10 Sekunden
+        Catalog->>Loader: Plugin-Verzeichnisse erneut scannen
+        Loader-->>Catalog: aktueller Plugin-Snapshot
+        Catalog->>Catalog: Plugin-Woerter ersetzen
+    end
     Ui->>Api: GET /api/games/word-lengths
     Api-->>Ui: verfuegbare Wortlaengen
     Ui->>Api: POST /api/games mit wordLength
@@ -105,24 +110,28 @@ com.example.wordl.SevenLetterWordsPlugin
 
 Ohne diesen Eintrag wird das JAR zwar gefunden, aber kein Plugin daraus registriert.
 
-## 5. Ladeort
+## 5. Ladeort und Aktualisierung
 
-Beim Start sucht `WordPluginLoader` nach JAR-Dateien:
+`WordPluginLoader` sucht nach JAR-Dateien:
 
 - im Ordner aus der System-Property `wordl.plugin.dir`
 - alternativ im Ordner aus der Umgebungsvariable `WORDL_PLUGIN_DIR`
 - im Ordner der laufenden Anwendung
 - im aktuellen Arbeitsverzeichnis
 
+Der Katalog wird beim Start und danach alle 10 Sekunden aktualisiert. Dabei wird immer ein kompletter Snapshot der aktuell vorhandenen Plugin-JARs erzeugt:
+
+- Neue JARs werden geladen.
+- Entfernte JARs werden entladen, indem ihre Woerter aus dem Katalog verschwinden.
+- Eingebaute Wortlisten bleiben immer vorhanden.
+
 Der normale Zielzustand fuer den Unterricht ist:
 
 ```text
 spiel-ordner/
-  backend-0.0.1-SNAPSHOT.jar
+  backend-0.0.1-SNAPSHOT-exec.jar
   mein-wort-plugin.jar
 ```
-
-Danach wird das Spiel neu gestartet. Plugins werden nur beim Start geladen.
 
 ## 6. API-Auswirkung
 
@@ -158,10 +167,9 @@ Content-Type: application/json
 Wenn ein Plugin nicht sichtbar wird, zuerst diese Punkte pruefen:
 
 - Liegt das Plugin-JAR im selben Ordner wie das Spiel-JAR?
-- Wurde das Spiel nach dem Kopieren des Plugins neu gestartet?
+- Wurde nach dem Kopieren oder Entfernen bis zu 10 Sekunden gewartet?
 - Enthaelt das JAR die Datei `META-INF/services/de.demo.wordl.backend.plugin.WordListPlugin`?
 - Steht in dieser Datei der korrekte Klassenname?
 - Implementiert die Klasse wirklich `de.demo.wordl.backend.plugin.WordListPlugin`?
 - Gibt `type()` die richtige Buchstabenanzahl zurueck?
 - Haben alle Woerter exakt diese Laenge und nur `A` bis `Z`?
-
