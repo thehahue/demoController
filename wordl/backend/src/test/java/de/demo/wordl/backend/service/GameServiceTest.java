@@ -49,4 +49,17 @@ class GameServiceTest {
         assertThat(game.status()).isEqualTo(GameStatus.LOST);
         assertThat(game.solution()).isEqualTo("APPLE");
     }
+
+    @Test
+    void usesPluginWordsForAdditionalWordLengths() {
+        WordCatalog wordCatalog = new WordCatalog(
+                Map.of(5, List.of("APPLE")),
+                Map.of(7, List.of("balance", "too-short", "CAPTURE")));
+        GameService service = new GameService(wordCatalog, new Random(0));
+
+        GameStateResponse game = service.createGame(new CreateGameRequest(7));
+
+        assertThat(game.wordLength()).isEqualTo(7);
+        assertThat(wordCatalog.supportedLengths()).containsExactly(5, 7);
+    }
 }

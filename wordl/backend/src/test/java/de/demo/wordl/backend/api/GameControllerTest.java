@@ -66,4 +66,13 @@ class GameControllerTest {
                                 """))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void exposesSupportedWordLengths() throws Exception {
+        mockMvc.perform(get("/api/games/word-lengths"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(4))
+                .andExpect(jsonPath("$[1]").value(5))
+                .andExpect(jsonPath("$[2]").value(6));
+    }
 }

@@ -4,6 +4,7 @@ import de.demo.wordl.backend.api.dto.CreateGameRequest;
 import de.demo.wordl.backend.api.dto.GameStateResponse;
 import de.demo.wordl.backend.api.dto.GuessRequest;
 import de.demo.wordl.backend.service.GameService;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,11 @@ public class GameController {
     @PostMapping
     public GameStateResponse createGame(@RequestBody(required = false) CreateGameRequest request) {
         return gameService.createGame(request == null ? new CreateGameRequest(null) : request);
+    }
+
+    @GetMapping("/word-lengths")
+    public List<Integer> supportedWordLengths() {
+        return gameService.supportedWordLengths();
     }
 
     @GetMapping("/{gameId}")

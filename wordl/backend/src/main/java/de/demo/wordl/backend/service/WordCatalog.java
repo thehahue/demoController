@@ -1,10 +1,14 @@
 package de.demo.wordl.backend.service;
 
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.TreeSet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,17 +16,28 @@ public class WordCatalog {
 
     private final Map<Integer, List<String>> wordsByLength;
 
-    public WordCatalog() {
-        this(defaultWords());
+    @Autowired
+    public WordCatalog(WordPluginLoader wordPluginLoader) {
+        this(defaultWords(), wordPluginLoader.loadPluginWords());
     }
 
     WordCatalog(Map<Integer, List<String>> wordsByLength) {
-        this.wordsByLength = wordsByLength.entrySet().stream()
+        this(wordsByLength, Map.of());
+    }
+
+    WordCatalog(Map<Integer, List<String>> defaultWordsByLength, Map<Integer, List<String>> pluginWordsByLength) {
+        Map<Integer, List<String>> mergedWordsByLength = new LinkedHashMap<>();
+        defaultWordsByLength.forEach((wordLength, words) ->
+                mergedWordsByLength.computeIfAbsent(wordLength, ignored -> new java.util.ArrayList<>()).addAll(words));
+        pluginWordsByLength.forEach((wordLength, words) ->
+                mergedWordsByLength.computeIfAbsent(wordLength, ignored -> new java.util.ArrayList<>()).addAll(words));
+
+        this.wordsByLength = mergedWordsByLength.entrySet().stream()
+                .map(entry -> Map.entry(entry.getKey(), normalizeWords(entry.getKey(), entry.getValue())))
+                .filter(entry -> !entry.getValue().isEmpty())
                 .collect(java.util.stream.Collectors.toUnmodifiableMap(
                         Map.Entry::getKey,
-                        entry -> entry.getValue().stream()
-                                .map(word -> word.toUpperCase(Locale.ROOT))
-                                .toList()));
+                        Map.Entry::getValue));
     }
 
     public boolean supports(int wordLength) {
@@ -39,6 +54,17 @@ public class WordCatalog {
             throw new IllegalArgumentException("Unsupported word length: " + wordLength);
         }
         return words.get(random.nextInt(words.size()));
+    }
+
+    private static List<String> normalizeWords(int wordLength, List<String> words) {
+        return words.stream()
+                .filter(Objects::nonNull)
+                .map(word -> word.toUpperCase(Locale.ROOT))
+                .filter(word -> word.length() == wordLength)
+                .filter(word -> word.matches("[A-Z]+"))
+                .collect(java.util.stream.Collectors.collectingAndThen(
+                        java.util.stream.Collectors.toCollection(LinkedHashSet::new),
+                        List::copyOf));
     }
 
     private static Map<Integer, List<String>> defaultWords() {

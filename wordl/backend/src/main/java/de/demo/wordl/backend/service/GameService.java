@@ -53,6 +53,10 @@ public class GameService {
         return toResponse(getSession(gameId), "Game loaded.");
     }
 
+    public List<Integer> supportedWordLengths() {
+        return wordCatalog.supportedLengths();
+    }
+
     public GameStateResponse submitGuess(UUID gameId, GuessRequest request) {
         if (request == null || request.guess() == null || request.guess().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guess must not be empty.");
